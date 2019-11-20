@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.MerchantUserMapper">
+    
+    <resultMap type="MerchantUser" id="MerchantUserResult">
+        <result property="id"    column="id"    />
+        <result property="merchantNo"    column="merchant_no"    />
+        <result property="username"    column="username"    />
+        <result property="password"    column="password"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="email"    column="email"    />
+        <result property="level"    column="level"    />
+        <result property="loginTimes"    column="login_times"    />
+        <result property="lastLoginTime"    column="last_login_time"    />
+        <result property="lastLoginIp"    column="last_login_ip"    />
+        <result property="thisLoginTime"    column="this_login_time"    />
+        <result property="thisLoginIp"    column="this_login_ip"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+    </resultMap>
+
+    <sql id="selectMerchantUserVo">
+        select id, merchant_no, username, password, phone_number, email, level, login_times, last_login_time, last_login_ip, this_login_time, this_login_ip, create_time, create_user from b_merchant_user
+    </sql>
+
+    <select id="selectMerchantUserList" parameterType="MerchantUser" resultMap="MerchantUserResult">
+        <include refid="selectMerchantUserVo"/>
+        <where>  
+            <if test="merchantNo != null  and merchantNo != ''"> and merchant_no = #{merchantNo}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="level != null "> and level = #{level}</if>
+            <if test="loginTimes != null "> and login_times = #{loginTimes}</if>
+            <if test="lastLoginTime != null "> and last_login_time = #{lastLoginTime}</if>
+            <if test="lastLoginIp != null  and lastLoginIp != ''"> and last_login_ip = #{lastLoginIp}</if>
+            <if test="thisLoginTime != null "> and this_login_time = #{thisLoginTime}</if>
+            <if test="thisLoginIp != null  and thisLoginIp != ''"> and this_login_ip = #{thisLoginIp}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectMerchantUserById" parameterType="Long" resultMap="MerchantUserResult">
+        <include refid="selectMerchantUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMerchantUser" parameterType="MerchantUser" useGeneratedKeys="true" keyProperty="id">
+        insert into b_merchant_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no,</if>
+            <if test="username != null  and username != ''">username,</if>
+            <if test="password != null  and password != ''">password,</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="level != null ">level,</if>
+            <if test="loginTimes != null ">login_times,</if>
+            <if test="lastLoginTime != null ">last_login_time,</if>
+            <if test="lastLoginIp != null  and lastLoginIp != ''">last_login_ip,</if>
+            <if test="thisLoginTime != null ">this_login_time,</if>
+            <if test="thisLoginIp != null  and thisLoginIp != ''">this_login_ip,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantNo != null  and merchantNo != ''">#{merchantNo},</if>
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="password != null  and password != ''">#{password},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="level != null ">#{level},</if>
+            <if test="loginTimes != null ">#{loginTimes},</if>
+            <if test="lastLoginTime != null ">#{lastLoginTime},</if>
+            <if test="lastLoginIp != null  and lastLoginIp != ''">#{lastLoginIp},</if>
+            <if test="thisLoginTime != null ">#{thisLoginTime},</if>
+            <if test="thisLoginIp != null  and thisLoginIp != ''">#{thisLoginIp},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMerchantUser" parameterType="MerchantUser">
+        update b_merchant_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no = #{merchantNo},</if>
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="password != null  and password != ''">password = #{password},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number = #{phoneNumber},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="level != null ">level = #{level},</if>
+            <if test="loginTimes != null ">login_times = #{loginTimes},</if>
+            <if test="lastLoginTime != null ">last_login_time = #{lastLoginTime},</if>
+            <if test="lastLoginIp != null  and lastLoginIp != ''">last_login_ip = #{lastLoginIp},</if>
+            <if test="thisLoginTime != null ">this_login_time = #{thisLoginTime},</if>
+            <if test="thisLoginIp != null  and thisLoginIp != ''">this_login_ip = #{thisLoginIp},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerchantUserById" parameterType="Long">
+        delete from b_merchant_user where id = #{id}
+    </delete>
+
+    <delete id="deleteMerchantUserByIds" parameterType="String">
+        delete from b_merchant_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

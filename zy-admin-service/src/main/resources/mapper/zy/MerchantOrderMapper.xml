@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.MerchantOrderMapper">
+    
+    <resultMap type="MerchantOrder" id="MerchantOrderResult">
+        <result property="id"    column="id"    />
+        <result property="sysOrderNo"    column="sys_order_no"    />
+        <result property="merchantNo"    column="merchant_no"    />
+        <result property="merOrderNo"    column="mer_order_no"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="orderAmount"    column="order_amount"    />
+        <result property="orderFeeAmount"    column="order_fee_amount"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="returnUrl"    column="return_url"    />
+        <result property="notifyUrl"    column="notify_url"    />
+        <result property="notifyStatus"    column="notify_status"    />
+        <result property="notifyNum"    column="notify_num"    />
+        <result property="failureReason"    column="failure_reason"    />
+        <result property="productName"    column="product_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectMerchantOrderVo">
+        select id, sys_order_no, merchant_no, mer_order_no, pay_type, order_amount, order_fee_amount, order_status, pay_time, return_url, notify_url, notify_status, notify_num, failure_reason, product_name, remark, create_time, update_time from b_merchant_order
+    </sql>
+
+    <select id="selectMerchantOrderList" parameterType="MerchantOrder" resultMap="MerchantOrderResult">
+        <include refid="selectMerchantOrderVo"/>
+        <where>  
+            <if test="sysOrderNo != null  and sysOrderNo != ''"> and sys_order_no = #{sysOrderNo}</if>
+            <if test="merchantNo != null  and merchantNo != ''"> and merchant_no = #{merchantNo}</if>
+            <if test="merOrderNo != null  and merOrderNo != ''"> and mer_order_no = #{merOrderNo}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
+            <if test="orderFeeAmount != null "> and order_fee_amount = #{orderFeeAmount}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
+            <if test="returnUrl != null  and returnUrl != ''"> and return_url = #{returnUrl}</if>
+            <if test="notifyUrl != null  and notifyUrl != ''"> and notify_url = #{notifyUrl}</if>
+            <if test="notifyStatus != null  and notifyStatus != ''"> and notify_status = #{notifyStatus}</if>
+            <if test="notifyNum != null "> and notify_num = #{notifyNum}</if>
+            <if test="failureReason != null  and failureReason != ''"> and failure_reason = #{failureReason}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectMerchantOrderById" parameterType="Long" resultMap="MerchantOrderResult">
+        <include refid="selectMerchantOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMerchantOrder" parameterType="MerchantOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into b_merchant_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysOrderNo != null  and sysOrderNo != ''">sys_order_no,</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no,</if>
+            <if test="merOrderNo != null  and merOrderNo != ''">mer_order_no,</if>
+            <if test="payType != null  and payType != ''">pay_type,</if>
+            <if test="orderAmount != null ">order_amount,</if>
+            <if test="orderFeeAmount != null ">order_fee_amount,</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status,</if>
+            <if test="payTime != null ">pay_time,</if>
+            <if test="returnUrl != null  and returnUrl != ''">return_url,</if>
+            <if test="notifyUrl != null  and notifyUrl != ''">notify_url,</if>
+            <if test="notifyStatus != null  and notifyStatus != ''">notify_status,</if>
+            <if test="notifyNum != null ">notify_num,</if>
+            <if test="failureReason != null  and failureReason != ''">failure_reason,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysOrderNo != null  and sysOrderNo != ''">#{sysOrderNo},</if>
+            <if test="merchantNo != null  and merchantNo != ''">#{merchantNo},</if>
+            <if test="merOrderNo != null  and merOrderNo != ''">#{merOrderNo},</if>
+            <if test="payType != null  and payType != ''">#{payType},</if>
+            <if test="orderAmount != null ">#{orderAmount},</if>
+            <if test="orderFeeAmount != null ">#{orderFeeAmount},</if>
+            <if test="orderStatus != null  and orderStatus != ''">#{orderStatus},</if>
+            <if test="payTime != null ">#{payTime},</if>
+            <if test="returnUrl != null  and returnUrl != ''">#{returnUrl},</if>
+            <if test="notifyUrl != null  and notifyUrl != ''">#{notifyUrl},</if>
+            <if test="notifyStatus != null  and notifyStatus != ''">#{notifyStatus},</if>
+            <if test="notifyNum != null ">#{notifyNum},</if>
+            <if test="failureReason != null  and failureReason != ''">#{failureReason},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMerchantOrder" parameterType="MerchantOrder">
+        update b_merchant_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysOrderNo != null  and sysOrderNo != ''">sys_order_no = #{sysOrderNo},</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no = #{merchantNo},</if>
+            <if test="merOrderNo != null  and merOrderNo != ''">mer_order_no = #{merOrderNo},</if>
+            <if test="payType != null  and payType != ''">pay_type = #{payType},</if>
+            <if test="orderAmount != null ">order_amount = #{orderAmount},</if>
+            <if test="orderFeeAmount != null ">order_fee_amount = #{orderFeeAmount},</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status = #{orderStatus},</if>
+            <if test="payTime != null ">pay_time = #{payTime},</if>
+            <if test="returnUrl != null  and returnUrl != ''">return_url = #{returnUrl},</if>
+            <if test="notifyUrl != null  and notifyUrl != ''">notify_url = #{notifyUrl},</if>
+            <if test="notifyStatus != null  and notifyStatus != ''">notify_status = #{notifyStatus},</if>
+            <if test="notifyNum != null ">notify_num = #{notifyNum},</if>
+            <if test="failureReason != null  and failureReason != ''">failure_reason = #{failureReason},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMerchantOrderById" parameterType="Long">
+        delete from b_merchant_order where id = #{id}
+    </delete>
+
+    <delete id="deleteMerchantOrderByIds" parameterType="String">
+        delete from b_merchant_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
