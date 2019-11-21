@@ -78,7 +78,7 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:bank:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:bank:remove')}]];
-        var prefix = ctx + "system/bank";
+        var prefix = ctx + "zy/bank";
 
         $(function() {
             var options = {
