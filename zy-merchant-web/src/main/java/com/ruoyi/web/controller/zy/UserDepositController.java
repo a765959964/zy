@@ -1,10 +1,12 @@
 package com.ruoyi.web.controller.zy;
 
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.config.Global;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.zy.domain.UserDeposit;
 import com.ruoyi.zy.service.IUserDepositService;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -81,9 +84,23 @@ public class UserDepositController extends BaseController
     @Log(title = "缴纳保证金记录", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(UserDeposit userDeposit)
+    public AjaxResult addSave(@RequestParam("file") MultipartFile file,UserDeposit userDeposit)
     {
-        return toAjax(userDepositService.insertUserDeposit(userDeposit));
+        try
+        {
+            if (!file.isEmpty())
+            {
+                String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
+                System.out.println(avatar);
+                userDeposit.setEarnestMoneyUrl(avatar);
+                return toAjax(userDepositService.insertUserDeposit(userDeposit));
+            }
+            return error();
+        }
+        catch (Exception e)
+        {
+            return error(e.getMessage());
+        }
     }
 
     /**
@@ -104,9 +121,24 @@ public class UserDepositController extends BaseController
     @Log(title = "缴纳保证金记录", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(UserDeposit userDeposit)
+    public AjaxResult editSave(@RequestParam("file") MultipartFile file, UserDeposit userDeposit)
     {
-        return toAjax(userDepositService.updateUserDeposit(userDeposit));
+
+        try
+        {
+            if (!file.isEmpty())
+            {
+                String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
+                userDeposit.setEarnestMoneyUrl(avatar);
+                return toAjax(userDepositService.updateUserDeposit(userDeposit));
+            }
+            return error();
+        }
+        catch (Exception e)
+        {
+            return error(e.getMessage());
+        }
+
     }
 
     /**
