@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('银行列表')" />
+    <th:block th:include="include :: header('商户信息列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -11,15 +11,13 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <p>银行编码：</p>
-                                <input type="text" name="bankCode"/>
+                                <p>商户名称：</p>
+                                <input type="text" name="merchantName"/>
                             </li>
                             <li>
-								状态：<select name="flag" th:with="type=${@dict.getType('sys_normal_disable')}">
-									<option value="">所有</option>
-									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-								</select>
-							</li>
+                                <p>商户号：</p>
+                                <input type="text" name="merchantNo"/>
+                            </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
@@ -30,13 +28,13 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:bank:add">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:merchant:add">
                     <i class="fa fa-plus"></i> 添加
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:bank:edit">
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:merchant:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:bank:remove">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:merchant:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
             </div>
@@ -47,10 +45,9 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:bank:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:bank:remove')}]];
-        var datas = [[${@dict.getType('sys_normal_disable')}]];
-        var prefix = ctx + "zy/bank";
+        var editFlag = [[${@permission.hasPermi('zy:merchant:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('zy:merchant:remove')}]];
+        var prefix = ctx + "zy/merchant";
 
         $(function() {
             var options = {
@@ -58,7 +55,8 @@
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
-                modalName: "银行信息",
+                exportUrl: prefix + "/export",
+                modalName: "商户信息",
                 columns: [{
                     checkbox: true
                 },
@@ -68,44 +66,20 @@
                     visible: false
                 },
                 {
-                    field : 'bankCode', 
-                    title : '银行编码'
+                    field : 'merchantName', 
+                    title : '商户名称'
                 },
                 {
-                    field : 'bankName', 
-                    title : '银行名称'
+                    field : 'merchantNo', 
+                    title : '商户号'
                 },
                 {
-                    field : 'accountName', 
-                    title : '开户名'
+                    field : 'merchantSecret', 
+                    title : '商户秘钥'
                 },
-                {
-                    field : 'accountNo', 
-                    title : '开户卡号'
-                },
-                {
-                    field : 'accountAddress', 
-                    title : '开户地址'
-                },
-                {
-                    field : 'amount', 
-                    title : '存款金额'
-                },
-                {
-		            field: 'flag',
-		            title: '状态',
-		            align: "left",
-		            formatter: function(value, item, index) {
-		            	return $.table.selectDictLabel(datas, item.flag);
-		            }
-		        },
                 {
                     field : 'createUser', 
                     title : '创建人'
-                },
-                {
-                    field : 'updateUser', 
-                    title : '修改人'
                 },
                 {
                     title: '操作',

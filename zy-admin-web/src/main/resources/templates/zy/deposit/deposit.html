@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('保证金记录列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>用户名：</p>
+                                <input type="text" name="username"/>
+                            </li>
+                            <li>
+                                <p>保证金金额：</p>
+                                <input type="text" name="earnestMoney"/>
+                            </li>
+                            <li>
+                                <p>保证金图片地址：</p>
+                                <input type="text" name="earnestMoneyUrl"/>
+                            </li>
+                            <li>
+                                <p>收款二维码类型：</p>
+                                <select name="receiptType" th:with="type=${@dict.getType('')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>累计收款金额：</p>
+                                <input type="text" name="receiptAmount"/>
+                            </li>
+                            <li>
+                                <p>累计佣金金额：</p>
+                                <input type="text" name="receiptCommissionAmount"/>
+                            </li>
+                            <li>
+                                <p>佣金提取标志：</p>
+                                <input type="text" name="withdrawalFlag"/>
+                            </li>
+                            <li class="select-time">
+                                <p>佣金提取时间：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginWithdrawalTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endWithdrawalTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>佣金确认时间：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginConfirmTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endConfirmTime]"/>
+                            </li>
+                            <li>
+                                <p>审核状态：</p>
+                                <select name="reviewStatus">
+                                    <option value="">所有</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>驳回原因：</p>
+                                <input type="text" name="reason"/>
+                            </li>
+                            <li class="select-time">
+                                <p>审核时间：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginReviewTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endReviewTime]"/>
+                            </li>
+                            <li>
+                                <p>是否开启使用：</p>
+                                <input type="text" name="flag"/>
+                            </li>
+                            <li>
+                                <p>订单状态：</p>
+                                <select name="status">
+                                    <option value="">所有</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>补发金额：</p>
+                                <input type="text" name="spreadAmount"/>
+                            </li>
+                            <li>
+                                <p>收款银行编号：</p>
+                                <input type="text" name="receiptBankId"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:deposit:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:deposit:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:deposit:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="zy:deposit:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('zy:deposit:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('zy:deposit:remove')}]];
+        var prefix = ctx + "zy/deposit";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "保证金记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '编号',
+                    visible: false
+                },
+                {
+                    field : 'username', 
+                    title : '用户名'
+                },
+                {
+                    field : 'earnestMoney', 
+                    title : '保证金金额'
+                },
+                {
+                    field : 'earnestMoneyUrl', 
+                    title : '保证金图片地址'
+                },
+                {
+                    field : 'receiptType', 
+                    title : '收款二维码类型'
+                },
+                {
+                    field : 'receiptAmount', 
+                    title : '累计收款金额'
+                },
+                {
+                    field : 'receiptCommissionAmount', 
+                    title : '累计佣金金额'
+                },
+                {
+                    field : 'withdrawalFlag', 
+                    title : '佣金提取标志'
+                },
+                {
+                    field : 'withdrawalTime', 
+                    title : '佣金提取时间'
+                },
+                {
+                    field : 'confirmTime', 
+                    title : '佣金确认时间'
+                },
+                {
+                    field : 'reviewStatus', 
+                    title : '审核状态'
+                },
+                {
+                    field : 'reason', 
+                    title : '驳回原因'
+                },
+                {
+                    field : 'reviewTime', 
+                    title : '审核时间'
+                },
+                {
+                    field : 'flag', 
+                    title : '是否开启使用'
+                },
+                {
+                    field : 'status', 
+                    title : '订单状态'
+                },
+                {
+                    field : 'spreadAmount', 
+                    title : '补发金额'
+                },
+                {
+                    field : 'remark', 
+                    title : '备注'
+                },
+                {
+                    field : 'receiptBankId', 
+                    title : '收款银行编号'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>
