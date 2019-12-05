@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.BUserExtendMapper">
+    
+    <resultMap type="BUserExtend" id="BUserExtendResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="wechatFlag"    column="wechat_flag"    />
+        <result property="wechatReason"    column="wechat_reason"    />
+        <result property="alipayFlag"    column="alipay_flag"    />
+        <result property="alipayReason"    column="alipay_reason"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBUserExtendVo">
+        select id, username, wechat_flag, wechat_reason, alipay_flag, alipay_reason, create_time, update_time from b_user_extend
+    </sql>
+
+    <select id="selectBUserExtendList" parameterType="BUserExtend" resultMap="BUserExtendResult">
+        <include refid="selectBUserExtendVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="wechatFlag != null  and wechatFlag != ''"> and wechat_flag = #{wechatFlag}</if>
+            <if test="wechatReason != null  and wechatReason != ''"> and wechat_reason = #{wechatReason}</if>
+            <if test="alipayFlag != null  and alipayFlag != ''"> and alipay_flag = #{alipayFlag}</if>
+            <if test="alipayReason != null  and alipayReason != ''"> and alipay_reason = #{alipayReason}</if>
+        </where>
+    </select>
+    
+    <select id="selectBUserExtendById" parameterType="Long" resultMap="BUserExtendResult">
+        <include refid="selectBUserExtendVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBUserExtend" parameterType="BUserExtend" useGeneratedKeys="true" keyProperty="id">
+        insert into b_user_extend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">username,</if>
+            <if test="wechatFlag != null  and wechatFlag != ''">wechat_flag,</if>
+            <if test="wechatReason != null  and wechatReason != ''">wechat_reason,</if>
+            <if test="alipayFlag != null  and alipayFlag != ''">alipay_flag,</if>
+            <if test="alipayReason != null  and alipayReason != ''">alipay_reason,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="wechatFlag != null  and wechatFlag != ''">#{wechatFlag},</if>
+            <if test="wechatReason != null  and wechatReason != ''">#{wechatReason},</if>
+            <if test="alipayFlag != null  and alipayFlag != ''">#{alipayFlag},</if>
+            <if test="alipayReason != null  and alipayReason != ''">#{alipayReason},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBUserExtend" parameterType="BUserExtend">
+        update b_user_extend
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="wechatFlag != null  and wechatFlag != ''">wechat_flag = #{wechatFlag},</if>
+            <if test="wechatReason != null  and wechatReason != ''">wechat_reason = #{wechatReason},</if>
+            <if test="alipayFlag != null  and alipayFlag != ''">alipay_flag = #{alipayFlag},</if>
+            <if test="alipayReason != null  and alipayReason != ''">alipay_reason = #{alipayReason},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBUserExtendById" parameterType="Long">
+        delete from b_user_extend where id = #{id}
+    </delete>
+
+    <delete id="deleteBUserExtendByIds" parameterType="String">
+        delete from b_user_extend where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
