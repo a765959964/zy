@@ -115,24 +115,24 @@ public class UserDepositController extends BaseController
     }
 
     /**
-     * 修改保存缴纳保证金记录
+     * 修改保存缴纳保证金记录 @RequestParam("file")
      */
     @RequiresPermissions("zy:userDeposit:edit")
     @Log(title = "缴纳保证金记录", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(@RequestParam("file") MultipartFile file, UserDeposit userDeposit)
+    public AjaxResult editSave( MultipartFile file, UserDeposit userDeposit)
     {
 
         try
         {
-            if (!file.isEmpty())
+            if (file !=null)
             {
                 String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
                 userDeposit.setEarnestMoneyUrl(avatar);
                 return toAjax(userDepositService.updateUserDeposit(userDeposit));
             }
-            return error();
+            return toAjax(userDepositService.updateUserDeposit(userDeposit));
         }
         catch (Exception e)
         {
