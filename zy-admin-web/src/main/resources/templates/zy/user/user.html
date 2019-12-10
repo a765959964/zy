@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('银行列表')" />
+    <th:block th:include="include :: header('用户管理列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -11,11 +11,19 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <p>银行编码：</p>
-                                <input type="text" name="bankCode"/>
+                                <p>用户名：</p>
+                                <input type="text" name="username"/>
                             </li>
                             <li>
-								状态：<select name="flag" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                <p>推荐人账号：</p>
+                                <input type="text" name="agent"/>
+                            </li>
+                            <li>
+                                <p>手机号码：</p>
+                                <input type="text" name="phoneNumber"/>
+                            </li>
+                            <li>
+								状态：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
 									<option value="">所有</option>
 									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
 								</select>
@@ -30,13 +38,13 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:bank:add">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:user:add">
                     <i class="fa fa-plus"></i> 添加
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:bank:edit">
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:user:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:bank:remove">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:user:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
             </div>
@@ -47,10 +55,9 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:bank:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:bank:remove')}]];
-        var datas = [[${@dict.getType('sys_normal_disable')}]];
-        var prefix = ctx + "zy/bank";
+        var editFlag = [[${@permission.hasPermi('zy:user:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('zy:user:remove')}]];
+        var prefix = ctx + "zy/user";
 
         $(function() {
             var options = {
@@ -58,7 +65,7 @@
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
-                modalName: "银行信息",
+                modalName: "用户管理",
                 columns: [{
                     checkbox: true
                 },
@@ -68,44 +75,65 @@
                     visible: false
                 },
                 {
-                    field : 'bankCode', 
-                    title : '银行编码'
+                    field : 'username', 
+                    title : '用户名'
                 },
                 {
-                    field : 'bankName', 
-                    title : '银行名称'
+                    field : 'password', 
+                    title : '密码'
                 },
                 {
-                    field : 'accountName', 
-                    title : '开户名'
+                    field : 'agent', 
+                    title : '推荐人账号'
                 },
                 {
-                    field : 'accountNo', 
-                    title : '开户卡号'
+                    field : 'phoneNumber', 
+                    title : '手机号码'
                 },
                 {
-                    field : 'accountAddress', 
-                    title : '开户地址'
+                    field : 'commissionRate', 
+                    title : '佣金比例'
                 },
                 {
-                    field : 'amount', 
-                    title : '存款金额'
+                    field : 'level', 
+                    title : '级别'
                 },
                 {
-		            field: 'flag',
+                    field : 'frequency', 
+                    title : '申请次数'
+                },
+                {
+                    field : 'loginTimes', 
+                    title : '登录次数'
+                },
+                {
+                    field : 'lastLoginTime', 
+                    title : '上次登录时间'
+                },
+                {
+                    field : 'lastLoginIp', 
+                    title : '上次登录地址'
+                },
+                {
+                	
+                    field : 'thisLoginTime', 
+                    title : '本次登录时间'
+                },
+                {
+                    field : 'thisLoginIp', 
+                    title : '本次登录地址'
+                },
+                {
+		            field: 'status',
 		            title: '状态',
 		            align: "left",
 		            formatter: function(value, item, index) {
-		            	return $.table.selectDictLabel(datas, item.flag);
+		            	return $.table.selectDictLabel(datas, item.status);
 		            }
 		        },
                 {
-                    field : 'createUser', 
-                    title : '创建人'
-                },
-                {
-                    field : 'updateUser', 
-                    title : '修改人'
+                    field : 'registerTime', 
+                    title : '注册时间'
                 },
                 {
                     title: '操作',

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.BUserOrderMapper">
+    
+    <resultMap type="BUserOrder" id="BUserOrderResult">
+        <result property="id"    column="id"    />
+        <result property="depositId"    column="deposit_id"    />
+        <result property="username"    column="username"    />
+        <result property="merchantNo"    column="merchant_no"    />
+        <result property="sysOrderNo"    column="sys_order_no"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="orderAmount"    column="order_amount"    />
+        <result property="payAmount"    column="pay_amount"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="orderRemark"    column="order_remark"    />
+        <result property="confirmTime"    column="confirm_time"    />
+        <result property="confirmUser"    column="confirm_user"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBUserOrderVo">
+        select id, deposit_id, username, merchant_no, sys_order_no, order_type, order_amount, pay_amount, order_status, order_remark, confirm_time, confirm_user, create_time from b_user_order
+    </sql>
+
+    <select id="selectBUserOrderList" parameterType="BUserOrder" resultMap="BUserOrderResult">
+        <include refid="selectBUserOrderVo"/>
+        <where>  
+            <if test="depositId != null "> and deposit_id = #{depositId}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="merchantNo != null  and merchantNo != ''"> and merchant_no = #{merchantNo}</if>
+            <if test="sysOrderNo != null  and sysOrderNo != ''"> and sys_order_no = #{sysOrderNo}</if>
+            <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
+            <if test="payAmount != null "> and pay_amount = #{payAmount}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+            <if test="orderRemark != null  and orderRemark != ''"> and order_remark = #{orderRemark}</if>
+            <if test="confirmTime != null "> and confirm_time = #{confirmTime}</if>
+            <if test="confirmUser != null  and confirmUser != ''"> and confirm_user = #{confirmUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectBUserOrderById" parameterType="Long" resultMap="BUserOrderResult">
+        <include refid="selectBUserOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBUserOrder" parameterType="BUserOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into b_user_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="depositId != null ">deposit_id,</if>
+            <if test="username != null  and username != ''">username,</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no,</if>
+            <if test="sysOrderNo != null  and sysOrderNo != ''">sys_order_no,</if>
+            <if test="orderType != null  and orderType != ''">order_type,</if>
+            <if test="orderAmount != null ">order_amount,</if>
+            <if test="payAmount != null ">pay_amount,</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status,</if>
+            <if test="orderRemark != null  and orderRemark != ''">order_remark,</if>
+            <if test="confirmTime != null ">confirm_time,</if>
+            <if test="confirmUser != null  and confirmUser != ''">confirm_user,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="depositId != null ">#{depositId},</if>
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="merchantNo != null  and merchantNo != ''">#{merchantNo},</if>
+            <if test="sysOrderNo != null  and sysOrderNo != ''">#{sysOrderNo},</if>
+            <if test="orderType != null  and orderType != ''">#{orderType},</if>
+            <if test="orderAmount != null ">#{orderAmount},</if>
+            <if test="payAmount != null ">#{payAmount},</if>
+            <if test="orderStatus != null  and orderStatus != ''">#{orderStatus},</if>
+            <if test="orderRemark != null  and orderRemark != ''">#{orderRemark},</if>
+            <if test="confirmTime != null ">#{confirmTime},</if>
+            <if test="confirmUser != null  and confirmUser != ''">#{confirmUser},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBUserOrder" parameterType="BUserOrder">
+        update b_user_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="depositId != null ">deposit_id = #{depositId},</if>
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no = #{merchantNo},</if>
+            <if test="sysOrderNo != null  and sysOrderNo != ''">sys_order_no = #{sysOrderNo},</if>
+            <if test="orderType != null  and orderType != ''">order_type = #{orderType},</if>
+            <if test="orderAmount != null ">order_amount = #{orderAmount},</if>
+            <if test="payAmount != null ">pay_amount = #{payAmount},</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status = #{orderStatus},</if>
+            <if test="orderRemark != null  and orderRemark != ''">order_remark = #{orderRemark},</if>
+            <if test="confirmTime != null ">confirm_time = #{confirmTime},</if>
+            <if test="confirmUser != null  and confirmUser != ''">confirm_user = #{confirmUser},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBUserOrderById" parameterType="Long">
+        delete from b_user_order where id = #{id}
+    </delete>
+
+    <delete id="deleteBUserOrderByIds" parameterType="String">
+        delete from b_user_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

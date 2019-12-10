@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.BMerchantMapper">
+    
+    <resultMap type="BMerchant" id="BMerchantResult">
+        <result property="id"    column="id"    />
+        <result property="merchantName"    column="merchant_name"    />
+        <result property="merchantNo"    column="merchant_no"    />
+        <result property="merchantSecret"    column="merchant_secret"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+    </resultMap>
+
+    <sql id="selectBMerchantVo">
+        select id, merchant_name, merchant_no, merchant_secret, create_time, create_user from b_merchant
+    </sql>
+
+    <select id="selectBMerchantList" parameterType="BMerchant" resultMap="BMerchantResult">
+        <include refid="selectBMerchantVo"/>
+        <where>  
+            <if test="merchantName != null  and merchantName != ''"> and merchant_name like concat('%', #{merchantName}, '%')</if>
+            <if test="merchantNo != null  and merchantNo != ''"> and merchant_no = #{merchantNo}</if>
+            <if test="merchantSecret != null  and merchantSecret != ''"> and merchant_secret = #{merchantSecret}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectBMerchantById" parameterType="Long" resultMap="BMerchantResult">
+        <include refid="selectBMerchantVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBMerchant" parameterType="BMerchant" useGeneratedKeys="true" keyProperty="id">
+        insert into b_merchant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="merchantName != null  and merchantName != ''">merchant_name,</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no,</if>
+            <if test="merchantSecret != null  and merchantSecret != ''">merchant_secret,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="merchantName != null  and merchantName != ''">#{merchantName},</if>
+            <if test="merchantNo != null  and merchantNo != ''">#{merchantNo},</if>
+            <if test="merchantSecret != null  and merchantSecret != ''">#{merchantSecret},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBMerchant" parameterType="BMerchant">
+        update b_merchant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantName != null  and merchantName != ''">merchant_name = #{merchantName},</if>
+            <if test="merchantNo != null  and merchantNo != ''">merchant_no = #{merchantNo},</if>
+            <if test="merchantSecret != null  and merchantSecret != ''">merchant_secret = #{merchantSecret},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBMerchantById" parameterType="Long">
+        delete from b_merchant where id = #{id}
+    </delete>
+
+    <delete id="deleteBMerchantByIds" parameterType="String">
+        delete from b_merchant where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

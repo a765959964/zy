@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('银行列表')" />
+    <th:block th:include="include :: header('收款码管理列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -11,15 +11,25 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <p>银行编码：</p>
-                                <input type="text" name="bankCode"/>
+                                <p>用户名：</p>
+                                <input type="text" name="username"/>
                             </li>
                             <li>
-								状态：<select name="flag" th:with="type=${@dict.getType('sys_normal_disable')}">
-									<option value="">所有</option>
-									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-								</select>
-							</li>
+                                <p>微信收款码审核标志：</p>
+                                <input type="text" name="wechatFlag"/>
+                            </li>
+                            <li>
+                                <p>微信收款码驳回原因：</p>
+                                <input type="text" name="wechatReason"/>
+                            </li>
+                            <li>
+                                <p>支付宝收款码审核标志：</p>
+                                <input type="text" name="alipayFlag"/>
+                            </li>
+                            <li>
+                                <p>支付宝收款码驳回原因：</p>
+                                <input type="text" name="alipayReason"/>
+                            </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
@@ -30,15 +40,18 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:bank:add">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:extend:add">
                     <i class="fa fa-plus"></i> 添加
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:bank:edit">
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:extend:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:bank:remove">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:extend:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="zy:extend:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -47,10 +60,9 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:bank:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:bank:remove')}]];
-        var datas = [[${@dict.getType('sys_normal_disable')}]];
-        var prefix = ctx + "zy/bank";
+        var editFlag = [[${@permission.hasPermi('zy:extend:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('zy:extend:remove')}]];
+        var prefix = ctx + "zy/extend";
 
         $(function() {
             var options = {
@@ -58,7 +70,8 @@
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
-                modalName: "银行信息",
+                exportUrl: prefix + "/export",
+                modalName: "收款码管理",
                 columns: [{
                     checkbox: true
                 },
@@ -68,44 +81,24 @@
                     visible: false
                 },
                 {
-                    field : 'bankCode', 
-                    title : '银行编码'
+                    field : 'username', 
+                    title : '用户名'
                 },
                 {
-                    field : 'bankName', 
-                    title : '银行名称'
+                    field : 'wechatFlag', 
+                    title : '微信收款码审核标志'
                 },
                 {
-                    field : 'accountName', 
-                    title : '开户名'
+                    field : 'wechatReason', 
+                    title : '微信收款码驳回原因'
                 },
                 {
-                    field : 'accountNo', 
-                    title : '开户卡号'
+                    field : 'alipayFlag', 
+                    title : '支付宝收款码审核标志'
                 },
                 {
-                    field : 'accountAddress', 
-                    title : '开户地址'
-                },
-                {
-                    field : 'amount', 
-                    title : '存款金额'
-                },
-                {
-		            field: 'flag',
-		            title: '状态',
-		            align: "left",
-		            formatter: function(value, item, index) {
-		            	return $.table.selectDictLabel(datas, item.flag);
-		            }
-		        },
-                {
-                    field : 'createUser', 
-                    title : '创建人'
-                },
-                {
-                    field : 'updateUser', 
-                    title : '修改人'
+                    field : 'alipayReason', 
+                    title : '支付宝收款码驳回原因'
                 },
                 {
                     title: '操作',
