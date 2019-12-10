@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增商户订单记录')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-merchantOrder-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">系统订单号：</label>
+                <div class="col-sm-8">
+                    <input name="sysOrderNo" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">商户号：</label>
+                <div class="col-sm-8">
+                    <input name="merchantNo" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">商户订单号：</label>
+                <div class="col-sm-8">
+                    <input name="merOrderNo" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">支付方式：</label>
+                <div class="col-sm-8">
+                    <select name="payType" class="form-control m-b" required>
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单金额：</label>
+                <div class="col-sm-8">
+                    <input name="orderAmount" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单手续费金额：</label>
+                <div class="col-sm-8">
+                    <input name="orderFeeAmount" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box">
+                        <input type="radio" name="orderStatus" value="" required>
+                        <label th:for="orderStatus" th:text="未知"></label>
+                    </div>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单支付时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="payTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">同步地址：</label>
+                <div class="col-sm-8">
+                    <input name="returnUrl" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">回调地址：</label>
+                <div class="col-sm-8">
+                    <input name="notifyUrl" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">回调状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box">
+                        <input type="radio" name="notifyStatus" value="" required>
+                        <label th:for="notifyStatus" th:text="未知"></label>
+                    </div>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">回调次数：</label>
+                <div class="col-sm-8">
+                    <input name="notifyNum" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">回调失败原因：</label>
+                <div class="col-sm-8">
+                    <textarea name="failureReason" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">产品名称：</label>
+                <div class="col-sm-8">
+                    <input name="productName" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "zy/merchantOrder"
+        $("#form-merchantOrder-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-merchantOrder-add').serialize());
+            }
+        }
+
+        $("input[name='payTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>
