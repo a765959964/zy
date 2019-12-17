@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.BUserQrCodeMapper">
+    
+    <resultMap type="BUserQrCode" id="BUserQrCodeResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="receiptType"    column="receipt_type"    />
+        <result property="receiptAmount"    column="receipt_amount"    />
+        <result property="receiptQrcodeAmount"    column="receipt_qrcode_amount"    />
+        <result property="receiptQrcodeUrl"    column="receipt_qrcode_url"    />
+        <result property="matchTimes"    column="match_times"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBUserQrCodeVo">
+        select id, username, receipt_type, receipt_amount, receipt_qrcode_amount, receipt_qrcode_url, match_times, create_time from b_user_qr_code
+    </sql>
+
+    <select id="selectBUserQrCodeList" parameterType="BUserQrCode" resultMap="BUserQrCodeResult">
+        <include refid="selectBUserQrCodeVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="receiptType != null  and receiptType != ''"> and receipt_type = #{receiptType}</if>
+            <if test="receiptAmount != null "> and receipt_amount = #{receiptAmount}</if>
+            <if test="receiptQrcodeAmount != null "> and receipt_qrcode_amount = #{receiptQrcodeAmount}</if>
+            <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''"> and receipt_qrcode_url = #{receiptQrcodeUrl}</if>
+            <if test="matchTimes != null "> and match_times = #{matchTimes}</if>
+        </where>
+    </select>
+    
+    <select id="selectBUserQrCodeById" parameterType="Long" resultMap="BUserQrCodeResult">
+        <include refid="selectBUserQrCodeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBUserQrCode" parameterType="BUserQrCode" useGeneratedKeys="true" keyProperty="id">
+        insert into b_user_qr_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">username,</if>
+            <if test="receiptType != null  and receiptType != ''">receipt_type,</if>
+            <if test="receiptAmount != null ">receipt_amount,</if>
+            <if test="receiptQrcodeAmount != null ">receipt_qrcode_amount,</if>
+            <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">receipt_qrcode_url,</if>
+            <if test="matchTimes != null ">match_times,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="receiptType != null  and receiptType != ''">#{receiptType},</if>
+            <if test="receiptAmount != null ">#{receiptAmount},</if>
+            <if test="receiptQrcodeAmount != null ">#{receiptQrcodeAmount},</if>
+            <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">#{receiptQrcodeUrl},</if>
+            <if test="matchTimes != null ">#{matchTimes},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBUserQrCode" parameterType="BUserQrCode">
+        update b_user_qr_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="receiptType != null  and receiptType != ''">receipt_type = #{receiptType},</if>
+            <if test="receiptAmount != null ">receipt_amount = #{receiptAmount},</if>
+            <if test="receiptQrcodeAmount != null ">receipt_qrcode_amount = #{receiptQrcodeAmount},</if>
+            <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">receipt_qrcode_url = #{receiptQrcodeUrl},</if>
+            <if test="matchTimes != null ">match_times = #{matchTimes},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBUserQrCodeById" parameterType="Long">
+        delete from b_user_qr_code where id = #{id}
+    </delete>
+
+    <delete id="deleteBUserQrCodeByIds" parameterType="String">
+        delete from b_user_qr_code where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.zy.mapper.BUserReceiptMapper">
+    
+    <resultMap type="BUserReceipt" id="BUserReceiptResult">
+        <result property="id"    column="id"    />
+        <result property="username"    column="username"    />
+        <result property="wechatReceiptTimes"    column="wechat_receipt_times"    />
+        <result property="alipayReceiptTimes"    column="alipay_receipt_times"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBUserReceiptVo">
+        select id, username, wechat_receipt_times, alipay_receipt_times, update_time from b_user_receipt
+    </sql>
+
+    <select id="selectBUserReceiptList" parameterType="BUserReceipt" resultMap="BUserReceiptResult">
+        <include refid="selectBUserReceiptVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="wechatReceiptTimes != null "> and wechat_receipt_times = #{wechatReceiptTimes}</if>
+            <if test="alipayReceiptTimes != null "> and alipay_receipt_times = #{alipayReceiptTimes}</if>
+        </where>
+    </select>
+    
+    <select id="selectBUserReceiptById" parameterType="Long" resultMap="BUserReceiptResult">
+        <include refid="selectBUserReceiptVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBUserReceipt" parameterType="BUserReceipt" useGeneratedKeys="true" keyProperty="id">
+        insert into b_user_receipt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">username,</if>
+            <if test="wechatReceiptTimes != null ">wechat_receipt_times,</if>
+            <if test="alipayReceiptTimes != null ">alipay_receipt_times,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="wechatReceiptTimes != null ">#{wechatReceiptTimes},</if>
+            <if test="alipayReceiptTimes != null ">#{alipayReceiptTimes},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBUserReceipt" parameterType="BUserReceipt">
+        update b_user_receipt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="wechatReceiptTimes != null ">wechat_receipt_times = #{wechatReceiptTimes},</if>
+            <if test="alipayReceiptTimes != null ">alipay_receipt_times = #{alipayReceiptTimes},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBUserReceiptById" parameterType="Long">
+        delete from b_user_receipt where id = #{id}
+    </delete>
+
+    <delete id="deleteBUserReceiptByIds" parameterType="String">
+        delete from b_user_receipt where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
