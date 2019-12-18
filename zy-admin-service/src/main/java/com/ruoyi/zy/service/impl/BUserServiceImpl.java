@@ -1,6 +1,9 @@
 package com.ruoyi.zy.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.zy.mapper.BUserMapper;
@@ -19,6 +22,13 @@ public class BUserServiceImpl implements IBUserService
 {
     @Autowired
     private BUserMapper bUserMapper;
+    
+	public BUser get(String username) {
+		Map paramsMap = new HashMap();
+		paramsMap.put("username", username);
+		//return bUserMapper.get(paramsMap);
+		return null;
+	}
 
     /**
      * 查询用户管理

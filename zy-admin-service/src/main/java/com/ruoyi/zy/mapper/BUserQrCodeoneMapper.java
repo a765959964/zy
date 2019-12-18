@@ -2,6 +2,7 @@ package com.ruoyi.zy.mapper;
 
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 收款码管理Mapper接口
@@ -11,6 +12,9 @@ import java.util.List;
  */
 public interface BUserQrCodeoneMapper 
 {
+	
+	public BUserQrCodeone get(Map<String, Object> paramMap);
+	
     /**
      * 查询收款码管理
      * 

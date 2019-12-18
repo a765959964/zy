@@ -2,6 +2,7 @@ package com.ruoyi.zy.service;
 
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 收款码管理Service接口
@@ -11,7 +12,10 @@ import java.util.List;
  */
 public interface IBUserQrCodeoneService 
 {
-    /**
+    
+	public BUserQrCodeone get(Map<String, Object> paramMap);
+	
+	/**
      * 查询收款码管理
      * 
      * @param id 收款码管理ID

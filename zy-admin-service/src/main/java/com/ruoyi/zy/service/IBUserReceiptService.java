@@ -2,6 +2,7 @@ package com.ruoyi.zy.service;
 
 import com.ruoyi.zy.domain.BUserReceipt;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 收款次数Service接口
@@ -11,6 +12,11 @@ import java.util.List;
  */
 public interface IBUserReceiptService 
 {
+	
+	public List<BUserReceipt> findList(Map<String, Object> paramMap);
+	
+	public List<Map<String, Object>> minimumTimes(Map<String, Object> paramMap);
+	
     /**
      * 查询收款次数
      * 

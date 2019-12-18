@@ -2,6 +2,7 @@ package com.ruoyi.zy.service;
 
 import com.ruoyi.zy.domain.BUserQrCode;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户收款码表Service接口
@@ -11,6 +12,11 @@ import java.util.List;
  */
 public interface IBUserQrCodeService 
 {
+	
+	public List<BUserQrCode> findList(Map<String, Object> paramMap);
+
+	public Map<String, Object> minimumTimes(Map<String, Object> paramMap);
+	
     /**
      * 查询用户收款码表
      * 

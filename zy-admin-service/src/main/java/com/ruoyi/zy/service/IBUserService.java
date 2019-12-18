@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface IBUserService 
 {
+	
+	public BUser get(String paramString);
+	
     /**
      * 查询用户管理
      * 

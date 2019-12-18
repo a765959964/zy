@@ -2,6 +2,7 @@ package com.ruoyi.zy.mapper;
 
 import com.ruoyi.zy.domain.BUserDeposit;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 保证金记录Mapper接口
@@ -11,6 +12,11 @@ import java.util.List;
  */
 public interface BUserDepositMapper 
 {
+	
+	public List<BUserDeposit> available(Map<String, Object> paramMap);
+	
+	public List<BUserDeposit> findList(Map<String, Object> paramMap);
+	
     /**
      * 查询保证金记录
      * 

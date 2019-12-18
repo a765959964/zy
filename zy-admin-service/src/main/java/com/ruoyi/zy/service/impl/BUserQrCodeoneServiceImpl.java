@@ -1,6 +1,8 @@
 package com.ruoyi.zy.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,11 @@ public class BUserQrCodeoneServiceImpl implements IBUserQrCodeoneService
     @Autowired
     private BUserQrCodeoneMapper bUserQrCodeoneMapper;
 
+    
+	public BUserQrCodeone get(Map<String, Object> paramsMap) {
+		return this.bUserQrCodeoneMapper.get(paramsMap);
+	}
+    
     /**
      * 查询收款码管理
      * 

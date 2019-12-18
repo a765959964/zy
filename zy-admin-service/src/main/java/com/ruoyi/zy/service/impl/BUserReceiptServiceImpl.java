@@ -1,6 +1,8 @@
 package com.ruoyi.zy.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,15 @@ public class BUserReceiptServiceImpl implements IBUserReceiptService
     @Autowired
     private BUserReceiptMapper bUserReceiptMapper;
 
+    
+	public List<BUserReceipt> findList(Map<String, Object> paramsMap) {
+		return this.bUserReceiptMapper.findList(paramsMap);
+	}
+    
+    public List<Map<String, Object>> minimumTimes(Map<String, Object> paramsMap) {
+		return this.bUserReceiptMapper.minimumTimes(paramsMap);
+	}
+    
     /**
      * 查询收款次数
      * 

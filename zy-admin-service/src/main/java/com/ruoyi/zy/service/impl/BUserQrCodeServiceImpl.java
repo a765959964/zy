@@ -1,6 +1,8 @@
 package com.ruoyi.zy.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,17 @@ public class BUserQrCodeServiceImpl implements IBUserQrCodeService
     @Autowired
     private BUserQrCodeMapper bUserQrCodeMapper;
 
+    @Override
+	public List<BUserQrCode> findList(Map<String, Object> paramMap) {
+    	return bUserQrCodeMapper.findList(paramMap);
+	}
+
+	@Override
+	public Map<String, Object> minimumTimes(Map<String, Object> paramMap) {
+		return bUserQrCodeMapper.minimumTimes(paramMap);
+	}
+    
+    
     /**
      * 查询用户收款码表
      * 
@@ -93,4 +106,5 @@ public class BUserQrCodeServiceImpl implements IBUserQrCodeService
     {
         return bUserQrCodeMapper.deleteBUserQrCodeById(id);
     }
+
 }

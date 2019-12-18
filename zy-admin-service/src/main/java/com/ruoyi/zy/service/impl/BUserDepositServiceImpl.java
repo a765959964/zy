@@ -1,6 +1,8 @@
 package com.ruoyi.zy.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,15 @@ public class BUserDepositServiceImpl implements IBUserDepositService
     @Autowired
     private BUserDepositMapper bUserDepositMapper;
 
+    
+	public List<BUserDeposit> findList(Map<String, Object> paramsMap) {
+		return this.bUserDepositMapper.findList(paramsMap);
+	}
+    
+	public List<BUserDeposit> available(Map<String, Object> paramsMap) {
+		return this.bUserDepositMapper.available(paramsMap);
+	}
+	
     /**
      * 查询保证金记录
      * 
