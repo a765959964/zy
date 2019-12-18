@@ -13,6 +13,13 @@ import com.ruoyi.web.utils.DateUtil;
 import com.ruoyi.web.utils.GenerateOrderUtil;
 import com.ruoyi.web.utils.HttpUtil;
 import com.ruoyi.web.utils.MD5Util;
+import com.ruoyi.zy.domain.BMerchant;
+import com.ruoyi.zy.domain.BUser;
+import com.ruoyi.zy.domain.BUserDeposit;
+import com.ruoyi.zy.domain.BUserOrder;
+import com.ruoyi.zy.domain.BUserQrCode;
+import com.ruoyi.zy.domain.BUserQrCodeone;
+import com.ruoyi.zy.domain.MerchantOrder;
 import com.ruoyi.zy.domain.SSystemParameter;
 import com.ruoyi.zy.domain.UserDeposit;
 import com.ruoyi.zy.service.IBMerchantService;
@@ -21,6 +28,7 @@ import com.ruoyi.zy.service.IBUserDepositService;
 import com.ruoyi.zy.service.IBUserOrderService;
 import com.ruoyi.zy.service.IBUserQrCodeService;
 import com.ruoyi.zy.service.IBUserQrCodeoneService;
+import com.ruoyi.zy.service.IBUserReceiptService;
 import com.ruoyi.zy.service.IBUserService;
 import com.ruoyi.zy.service.IMerchantOrderService;
 import com.ruoyi.zy.service.ISSystemParameterService;
@@ -59,7 +67,7 @@ import java.awt.image.BufferedImage;
    private static ObjectMapper mapper = new ObjectMapper();
  
    @Autowired
-   private IBMerchantService masterMerchantService;
+   private IBMerchantService merchantService;
  
    @Autowired
    private IMerchantOrderService merchantOrderService;
@@ -84,6 +92,9 @@ import java.awt.image.BufferedImage;
  
    @Autowired
    private IBUserQrCodeService userQRCodeService;
+   
+   @Autowired
+   private IBUserReceiptService userReceiptService;
  
    private static Map<String, String> pageMap = new HashMap();
  
@@ -158,13 +169,14 @@ import java.awt.image.BufferedImage;
  
          receiptMap.put("columnName", columnName);
  
-         List miniList = this.slaveUserReceiptService.minimumTimes(receiptMap);
+         List<Map<String, Object>> miniList = this.userReceiptService.minimumTimes(receiptMap);
+         
          for (Map miniMap : miniList) {
            Object value = miniMap.get("receiptTimes");
  
            receiptMap.put("receiptTimes", Long.valueOf(value.toString()));
  
-           List userReceiptList = this.slaveUserReceiptService.findList(receiptMap);
+           List userReceiptList = this.userReceiptService.findList(receiptMap);
  
            Map depositMap = new HashMap();
  
@@ -175,7 +187,7 @@ import java.awt.image.BufferedImage;
            depositMap.put("orderAmount", Long.valueOf(Long.parseLong(order_amount)));
            depositMap.put("userReceiptList", userReceiptList);
  
-           depositList = this.masterUserDepositService.available(depositMap);
+           depositList = this.userDepositService.available(depositMap);
            if ((depositList != null) && (!depositList.isEmpty())) {
              break;
            }
@@ -200,7 +212,7 @@ import java.awt.image.BufferedImage;
        Map paramsMap = new HashMap();
        paramsMap.put("username", userDeposit.getUsername());
        paramsMap.put("receiptType", String.valueOf(map.get("pay_type")));
-       UserQRCodeOne uco = this.masterUserQRCodeOneService.get(paramsMap);
+       BUserQrCodeone uco = this.userQRCodeOneService.get(paramsMap);
        if (uco == null) {
          model.setViewName("pay/error");
          model.addObject("errorMessage", "未找到相应的存款二维码，请联系在线客服");
@@ -255,7 +267,7 @@ import java.awt.image.BufferedImage;
        sysParamMap.put("code", map.get("order_amount"));
        sysParamMap.put("flag", "Y");
  
-       SystemParameter systemParameter = this.masterSystemParameterService.get(sysParamMap);
+       SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
        if (systemParameter != null) {
          String value = systemParameter.getValue();
  
@@ -268,7 +280,7 @@ import java.awt.image.BufferedImage;
            depositMap.put("reviewStatus", "3");
            depositMap.put("status", "2");
  
-           depositList = this.masterUserDepositService.findList(depositMap);
+           depositList = this.userDepositService.findList(depositMap);
            if ((depositList != null) && (!depositList.isEmpty())) {
              userDeposit = (UserDeposit)depositList.get(0);
  
@@ -288,13 +300,13 @@ import java.awt.image.BufferedImage;
  
          receiptMap.put("columnName", columnName);
  
-         Object miniList = this.slaveUserReceiptService.minimumTimes(receiptMap);
+         Object miniList = this.userReceiptService.minimumTimes(receiptMap);
          for (Iterator localIterator = ((List)miniList).iterator(); localIterator.hasNext(); ) { Object miniMap = localIterator.next();
            Object value = ((Map)miniMap).get("receiptTimes");
  
            receiptMap.put("receiptTimes", Long.valueOf(Long.parseLong(String.valueOf(value))));
  
-           List userReceiptList = this.slaveUserReceiptService.findList(receiptMap);
+           List userReceiptList = this.userReceiptService.findList(receiptMap);
  
            Map depositMap = new HashMap();
  
@@ -305,7 +317,7 @@ import java.awt.image.BufferedImage;
            depositMap.put("orderAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
            depositMap.put("userReceiptList", userReceiptList);
  
-           depositList = this.masterUserDepositService.available(depositMap);
+           depositList = this.userDepositService.available(depositMap);
            if ((depositList != null) && (!depositList.isEmpty())) {
              break;
            }
@@ -326,7 +338,7 @@ import java.awt.image.BufferedImage;
  
          return model;
        }
-       UserQRCode userQRCode = null;
+       BUserQrCode userQRCode = null;
  
        Map paramsMap = new HashMap();
  
@@ -334,25 +346,25 @@ import java.awt.image.BufferedImage;
        paramsMap.put("receiptType", userDeposit.getReceiptType());
        paramsMap.put("receiptAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
  
-       Object minMap = this.slaveUserQRCodeService.minimumTimes(paramsMap);
+       Object minMap = this.userQRCodeService.minimumTimes(paramsMap);
  
        paramsMap.put("matchTimes", Long.valueOf(Long.parseLong(String.valueOf(((Map)minMap).get("matchTimes")))));
  
-       Object qrList = this.slaveUserQRCodeService.findList(paramsMap);
+       Object qrList = this.userQRCodeService.findList(paramsMap);
        if ((qrList == null) || (((List)qrList).isEmpty())) {
          model.setViewName("pay/error");
          model.addObject("errorMessage", "未找到相应的存款金额二维码，请联系在线客服");
  
          return model;
        }
-       userQRCode = (UserQRCode)((List)qrList).get(randomValue(((List)qrList).size()));
+       userQRCode = (BUserQrCode)((List)qrList).get(randomValue(((List)qrList).size()));
  
-       UserQRCode qr = new UserQRCode();
+       BUserQrCode qr = new BUserQrCode();
  
        qr.setId(userQRCode.getId());
        qr.setMatchTimes(Long.valueOf(userQRCode.getMatchTimes().longValue() + 1L));
  
-       this.masterUserQRCodeService.update(qr);
+       this.userQRCodeService.updateBUserQrCode(qr);
  
        map.put("depositId", String.valueOf(userDeposit.getId()));
        map.put("username", userDeposit.getUsername());
@@ -360,7 +372,7 @@ import java.awt.image.BufferedImage;
  
        Map resultMap = saveData(map);
        if (StringUtils.isNotEmpty((CharSequence)resultMap.get("sysOrderNo"))) {
-         User user = this.masterUserService.get(userDeposit.getUsername());
+         BUser user = this.userService.get(userDeposit.getUsername());
          if (StringUtils.isNotBlank(user.getPhoneNumber())) {
            sysParamMap = new HashMap();
  
@@ -368,7 +380,7 @@ import java.awt.image.BufferedImage;
            sysParamMap.put("code", "SMS");
            sysParamMap.put("flag", "Y");
  
-           SSystemParameter tempParameter = this.masterSystemParameterService.get(sysParamMap);
+           SSystemParameter tempParameter = this.systemParameterService.get(sysParamMap);
            if (tempParameter != null) {
              sysParamMap = new HashMap();
  
@@ -376,11 +388,11 @@ import java.awt.image.BufferedImage;
              sysParamMap.put("code", "SMS_PARAM");
              sysParamMap.put("flag", "Y");
  
-             tempParameter = this.masterSystemParameterService.get(sysParamMap);
+             tempParameter = this.systemParameterService.get(sysParamMap);
  
              String value = tempParameter.getValue();
  
-             SMSUtil.send(value.split("#")[0], value.split("#")[1], user.getPhoneNumber(), null);
+             //SMSUtil.send(value.split("#")[0], value.split("#")[1], user.getPhoneNumber(), null);
            } else {
              Map sendMap = new HashMap();
  
@@ -388,7 +400,7 @@ import java.awt.image.BufferedImage;
              sendMap.put("type", receiptType);
              sendMap.put("phoneNumber", user.getPhoneNumber());
  
-             SMSYXUtil.send(sendMap);
+             //SMSYXUtil.send(sendMap);
            }
          }
        }
@@ -405,7 +417,7 @@ import java.awt.image.BufferedImage;
    }
  
    private String verification(Map<String, String> valuesMap) {
-     Merchant merchant = this.masterMerchantService.get((String)valuesMap.get("merchant_no"));
+	 BMerchant merchant = this.merchantService.get((String)valuesMap.get("merchant_no"));
      if (merchant == null) {
        return "商户信息不存在，请核实后在操作";
      }
@@ -484,7 +496,7 @@ import java.awt.image.BufferedImage;
      sysParamMap.put("code", valuesMap.get("pay_type"));
      sysParamMap.put("flag", "Y");
  
-     SystemParameter systemParameter = this.masterSystemParameterService.get(sysParamMap);
+     SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
      if (systemParameter != null) {
        fee = Double.valueOf(Double.parseDouble(systemParameter.getValue()));
      }
@@ -507,9 +519,9 @@ import java.awt.image.BufferedImage;
      merchantOrder.setCreateTime(currentDate);
      merchantOrder.setUpdateTime(currentDate);
  
-     this.masterMerchantOrderService.insert(merchantOrder);
+     this.merchantOrderService.insertMerchantOrder((merchantOrder));
  
-     UserOrder userOrder = new UserOrder();
+     BUserOrder userOrder = new BUserOrder();
  
      userOrder.setDepositId(Long.valueOf(Long.parseLong((String)valuesMap.get("depositId"))));
      userOrder.setUsername((String)valuesMap.get("username"));
@@ -522,14 +534,14 @@ import java.awt.image.BufferedImage;
      userOrder.setOrderRemark(orderRemark);
      userOrder.setCreateTime(currentDate);
  
-     this.masterUserOrderService.insert(userOrder);
+     this.userOrderService.insertBUserOrder(userOrder);
  
-     UserDeposit userDeposit = new UserDeposit();
+     BUserDeposit userDeposit = new BUserDeposit();
  
      userDeposit.setId(Long.valueOf(Long.parseLong((String)valuesMap.get("depositId"))));
      userDeposit.setStatus("3");
  
-     this.masterUserDepositService.update(userDeposit);
+     this.userDepositService.updateBUserDeposit(userDeposit);
  
      Map resultMap = new HashMap();
  
