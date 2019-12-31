@@ -56,6 +56,57 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBUserDepositVo"/>
         where id = #{id}
     </select>
+    
+    <select id="findList" parameterType="java.util.Map" resultMap="BUserDepositResult">
+        select
+        <include refid="columns_sql"/>
+        from
+        B_USER_DEPOSIT o
+        where 1 = 1
+        <if test="username != null and username != ''">and username = #{username}</if>
+        <if test="receiptType != null and receiptType != ''">and receipt_type = #{receiptType}</if>
+        <if test="withdrawalFlag != null and withdrawalFlag != ''">and withdrawal_flag = #{withdrawalFlag}</if>
+        <if test="reviewStatus != null and reviewStatus != ''">and review_status = #{reviewStatus}</if>
+        <if test="flag != null and flag != ''">and flag = #{flag}</if>
+        <if test="status != null and status != ''">and status = #{status}</if>
+        <if test="agent != null and agent != ''">and o.username in (select u.username from b_user u where u.agent = #{agent} or u.username = #{agent})</if>
+        order by create_time desc
+    </select>
+    
+    <select id="available" parameterType="java.util.Map" resultMap="BUserDepositResult">
+        SELECT
+        d.id as id,
+        d.username as username,
+        d.earnest_money as earnestMoney,
+        d.earnest_money_url as earnestMoneyUrl,
+        d.receipt_type as receiptType,
+        d.receipt_amount as receiptAmount,
+        d.receipt_commission_amount as receiptCommissionAmount,
+        d.withdrawal_flag as withdrawalFlag,
+        d.withdrawal_time as withdrawalTime,
+        d.confirm_time as confirmTime,
+        d.review_status as reviewStatus,
+        d.reason as reason,
+        d.review_time as reviewTime,
+        d.flag as flag,
+        d.status as status,
+        d.receipt_bank_id as receiptBankId,
+        d.create_time as createTime
+        FROM
+        B_USER_DEPOSIT d, B_USER u
+        WHERE d.username = u.username and u.status = 'Y'
+        AND d.receipt_type = #{receiptType}
+        AND d.review_status = #{reviewStatus}
+        AND d.flag = #{flag}
+        AND d.status = #{status}
+        AND d.earnest_money - d.receipt_amount >= #{orderAmount}
+        <if test="userReceiptList != null and userReceiptList.size() > 0">
+            and d.username in
+            <foreach collection="userReceiptList" index="index" item="item" open="(" separator="," close=")">
+                #{item.username}
+            </foreach>
+        </if>
+    </select>
         
     <insert id="insertBUserDeposit" parameterType="BUserDeposit" useGeneratedKeys="true" keyProperty="id">
         insert into b_user_deposit

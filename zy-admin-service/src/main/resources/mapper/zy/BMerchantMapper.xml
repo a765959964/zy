@@ -27,6 +27,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
+    <select id="selectBMerchantById" parameterType="String" resultMap="BMerchantResult">
+        <include refid="selectBMerchantVo"/>
+        where merchant_no = #{merchantNo}
+    </select>
+    
     <select id="selectBMerchantById" parameterType="Long" resultMap="BMerchantResult">
         <include refid="selectBMerchantVo"/>
         where id = #{id}

@@ -31,6 +31,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
+    <select id="findList" parameterType="java.util.Map" resultMap="BUserQrCodeResult">
+        select
+        <include refid="columns_sql"/>
+        from
+        B_USER_QR_CODE
+        where 1 = 1
+        <if test="username != null and username != ''">and username = #{username}</if>
+        <if test="receiptType != null and receiptType != ''">and receipt_type = #{receiptType}</if>
+        <if test="receiptAmount != null">and receipt_amount = #{receiptAmount}</if>
+        <if test="matchTimes != null">and match_times = #{matchTimes}</if>
+    </select>
+    
+    <select id="minimumTimes" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+        ifnull(min(DISTINCT match_times),0) as matchTimes
+        from b_user_qr_code
+        where username = #{username} and receipt_amount = #{receiptAmount} and receipt_type = #{receiptType}
+    </select>
+    
     <select id="selectBUserQrCodeById" parameterType="Long" resultMap="BUserQrCodeResult">
         <include refid="selectBUserQrCodeVo"/>
         where id = #{id}

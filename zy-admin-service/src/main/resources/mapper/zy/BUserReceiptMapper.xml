@@ -15,6 +15,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectBUserReceiptVo">
         select id, username, wechat_receipt_times, alipay_receipt_times, update_time from b_user_receipt
     </sql>
+    
+    <select id="findList" parameterType="java.util.Map" resultMap="BUserReceiptResult">
+        select
+        a.id as id,
+        a.username as username,
+        a.wechat_receipt_times as wechatReceiptTimes,
+        a.alipay_receipt_times as alipayReceiptTimes,
+        a.update_time as updateTime
+        from
+        B_USER_RECEIPT a,B_USER b
+        where a.username = b.username and b.status='Y'
+        <if test="columnName != null and columnName != ''">and a.${columnName} = #{receiptTimes}</if>
+    </select>
+    
+    <select id="minimumTimes" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+        *
+        FROM
+        (
+        select
+        DISTINCT ${columnName} as receiptTimes
+        from B_USER_RECEIPT
+        ) a order by receiptTimes asc
+    </select>
 
     <select id="selectBUserReceiptList" parameterType="BUserReceipt" resultMap="BUserReceiptResult">
         <include refid="selectBUserReceiptVo"/>

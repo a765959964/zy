@@ -11,6 +11,15 @@ import java.util.List;
  */
 public interface IBMerchantService 
 {
+	
+	/**
+     * 查询商户信息
+     * 
+     * @param merchant_no
+     * @return 商户信息
+     */
+    public BMerchant get(String merchantNo);
+	
     /**
      * 查询商户信息
      * 

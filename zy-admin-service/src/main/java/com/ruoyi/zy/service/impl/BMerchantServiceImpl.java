@@ -24,6 +24,18 @@ public class BMerchantServiceImpl implements IBMerchantService
     /**
      * 查询商户信息
      * 
+     * @param merchantNo
+     * @return 商户信息
+     */
+    @Override
+    public BMerchant get(String merchantNo)
+    {
+        return bMerchantMapper.get(merchantNo);
+    }
+    
+    /**
+     * 查询商户信息
+     * 
      * @param id 商户信息ID
      * @return 商户信息
      */
