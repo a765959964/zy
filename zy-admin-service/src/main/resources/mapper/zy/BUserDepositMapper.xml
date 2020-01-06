@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="findList" parameterType="java.util.Map" resultMap="BUserDepositResult">
         select
-        <include refid="columns_sql"/>
+        <include refid="selectBUserDepositVo"/>
         from
         B_USER_DEPOSIT o
         where 1 = 1

@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="get" parameterType="java.util.Map" resultMap="BUserQrCodeoneResult">
         select
-        <include refid="columns_sql"/>
+        <include refid="selectBUserQrCodeoneVo"/>
         from
         B_USER_QR_CODEONE
         where 1 = 1

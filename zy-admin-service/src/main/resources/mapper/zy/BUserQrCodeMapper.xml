@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="findList" parameterType="java.util.Map" resultMap="BUserQrCodeResult">
         select
-        <include refid="columns_sql"/>
+        <include refid="selectBUserQrCodeVo"/>
         from
         B_USER_QR_CODE
         where 1 = 1
