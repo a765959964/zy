@@ -129,79 +129,77 @@ import java.awt.image.BufferedImage;
        List depositList = null;
        UserDeposit userDeposit = null;
  
-       Map sysParamMap = new HashMap();
+//       Map sysParamMap = new HashMap();
+// 
+//       sysParamMap.put("category", map.get("pay_type"));
+//       sysParamMap.put("code", "2000");
+//       sysParamMap.put("flag", "Y");
  
-       sysParamMap.put("category", map.get("pay_type"));
-       sysParamMap.put("code", "2000");
-       sysParamMap.put("flag", "Y");
- 
-       if (Integer.parseInt(order_amount) >= 20000) {
-    	 SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
-         if (systemParameter != null) {
-           String value = systemParameter.getValue();
- 
-           String[] arr = value.split("#");
-           for (String username : arr) {
-             Map depositMap = new HashMap();
- 
-             depositMap.put("username", username);
-             depositMap.put("receiptType", receiptType);
-             depositMap.put("flag", "Y");
-             depositMap.put("reviewStatus", "3");
-             depositMap.put("status", "2");
- 
-             depositList = this.userDepositService.findList(depositMap);
-             if ((depositList != null) && (!depositList.isEmpty())) {
-               userDeposit = (UserDeposit)depositList.get(0);
-               break;
-             }
-           }
+//       if (Integer.parseInt(order_amount) >= 20000) {
+//    	 SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
+//         if (systemParameter != null) {
+//           String value = systemParameter.getValue();
+// 
+//           String[] arr = value.split("#");
+//           for (String username : arr) {
+//             Map depositMap = new HashMap();
+// 
+//             depositMap.put("username", username);
+//             depositMap.put("receiptType", receiptType);
+//             depositMap.put("flag", "Y");
+//             depositMap.put("reviewStatus", "3");
+//             depositMap.put("status", "2");
+// 
+//             depositList = this.userDepositService.findList(depositMap);
+//             if ((depositList != null) && (!depositList.isEmpty())) {
+//               userDeposit = (UserDeposit)depositList.get(0);
+//               break;
+//             }
+//           }
+//         }
+//       }
+       String columnName = "";
+       if ("1001".equals(receiptType))
+         columnName = "wechat_receipt_times";
+       else if ("1002".equals(receiptType)) {
+         columnName = "alipay_receipt_times";
+       }
+       Map receiptMap = new HashMap();
+
+       receiptMap.put("columnName", columnName);
+
+       List<Map<String, Object>> miniList = this.userReceiptService.minimumTimes(receiptMap);
+       
+       for (Map miniMap : miniList) {
+         Object value = miniMap.get("receiptTimes");
+
+         receiptMap.put("receiptTimes", Long.valueOf(value.toString()));
+
+         List userReceiptList = this.userReceiptService.findList(receiptMap);
+
+         Map depositMap = new HashMap();
+
+         depositMap.put("receiptType", receiptType);
+         depositMap.put("reviewStatus", "3");
+         depositMap.put("flag", "Y");
+         depositMap.put("status", "2");
+         depositMap.put("orderAmount", Long.valueOf(Long.parseLong(order_amount)));
+         depositMap.put("userReceiptList", userReceiptList);
+
+         depositList = this.userDepositService.available(depositMap);
+         if ((depositList != null) && (!depositList.isEmpty())) {
+           break;
          }
        }
-       if (userDeposit == null) {
-         String columnName = "";
-         if ("1001".equals(receiptType))
-           columnName = "wechat_receipt_times";
-         else if ("1002".equals(receiptType)) {
-           columnName = "alipay_receipt_times";
-         }
-         Map receiptMap = new HashMap();
- 
-         receiptMap.put("columnName", columnName);
- 
-         List<Map<String, Object>> miniList = this.userReceiptService.minimumTimes(receiptMap);
-         
-         for (Map miniMap : miniList) {
-           Object value = miniMap.get("receiptTimes");
- 
-           receiptMap.put("receiptTimes", Long.valueOf(value.toString()));
- 
-           List userReceiptList = this.userReceiptService.findList(receiptMap);
- 
-           Map depositMap = new HashMap();
- 
-           depositMap.put("receiptType", receiptType);
-           depositMap.put("reviewStatus", "3");
-           depositMap.put("flag", "Y");
-           depositMap.put("status", "2");
-           depositMap.put("orderAmount", Long.valueOf(Long.parseLong(order_amount)));
-           depositMap.put("userReceiptList", userReceiptList);
- 
-           depositList = this.userDepositService.available(depositMap);
-           if ((depositList != null) && (!depositList.isEmpty())) {
-             break;
-           }
-         }
-         if ((depositList == null) || (depositList.isEmpty())) {
-           model.setViewName("pay/error");
-           model.addObject("errorMessage", "未获取到二维码，请联系在线客服处理");
- 
-           return model;
-         }
-         Collections.shuffle(depositList);
- 
-         userDeposit = (UserDeposit)depositList.get(randomValue(depositList.size()));
+       if ((depositList == null) || (depositList.isEmpty())) {
+         model.setViewName("pay/error");
+         model.addObject("errorMessage", "未获取到二维码，请联系在线客服处理");
+
+         return model;
        }
+       Collections.shuffle(depositList);
+
+       userDeposit = (UserDeposit)depositList.get(randomValue(depositList.size()));
        if (userDeposit == null) {
          model.setViewName("pay/error");
          model.addObject("errorMessage", "请上传收款码");
