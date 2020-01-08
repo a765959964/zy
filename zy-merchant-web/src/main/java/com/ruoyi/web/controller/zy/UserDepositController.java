@@ -90,8 +90,8 @@ public class UserDepositController extends BaseController
         {
             if (!file.isEmpty())
             {
-                String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
-                System.out.println(avatar);
+                String avatar = FileUploadUtils.upload(Global.getUploadPath(), file);
+//                System.out.println(avatar);
                 userDeposit.setEarnestMoneyUrl(avatar);
                 return toAjax(userDepositService.insertUserDeposit(userDeposit));
             }

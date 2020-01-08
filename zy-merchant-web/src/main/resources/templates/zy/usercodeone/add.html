@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增收款码管理')" />
+    <th:block th:include="include :: jasny-bootstrap-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-usercodeone-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户名：</label>
+                <div class="col-sm-8">
+                    <input name="username" class="form-control" type="text" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">收款二维码类型：</label>
+                <div class="col-sm-8">
+                    <select id="receiptType" name="receiptType" class="form-control m-b" th:with="type=${@dict.getType('sys_receipt_type')}">
+                        <option value="">请选择</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!--<div class="form-group">    -->
+                <!--<label class="col-sm-3 control-label">收款二维码地址：</label>-->
+                <!--<div class="col-sm-8">-->
+                    <!--<input name="receiptQrcodeUrl" class="form-control" type="text" required>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">收款二维码地址：</label>
+
+                <div class="fileinput fileinput-new" data-provides="fileinput">
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;margin-left: 13px;"></div>
+                    <div class="col-sm-8">
+                        <span class="btn btn-white btn-file"><span class="fileinput-new">选择图片</span><span class="fileinput-exists">更改</span><input id="file" name="file"  type="file"></span>
+                        <a href="#" class="btn btn-white fileinput-exists" data-dismiss="fileinput">清除</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div class="form-group">    -->
+                <!--<label class="col-sm-3 control-label">二维码code：</label>-->
+                <!--<div class="col-sm-8">-->
+                    <!--<input name="receiptQrcodeCode" class="form-control" type="text" required>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="form-group">    -->
+                <!--<label class="col-sm-3 control-label">当前登录的用户名：</label>-->
+                <!--<div class="col-sm-8">-->
+                    <!--<input name="agent" class="form-control" type="text">-->
+                <!--</div>-->
+            <!--</div>-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: jasny-bootstrap-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "zy/usercodeone"
+        $("#form-usercodeone-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                uploadFile();
+            }
+        }
+
+
+        function uploadFile() {
+            var formData = new FormData();
+            if ($('#file')[0].files[0] == null) {
+                $.modal.alertWarning("请先选择文件路径");
+                return false;
+            }
+//            console.log($('#file')[0].files[0]);
+            formData.append('file', $('#file')[0].files[0]);
+            formData.append("username",$("input[name='username']").val());
+            formData.append("receiptType",$("#receiptType").val());
+            console.log(formData);
+            $.ajax({
+                url: prefix + "/add",
+                type: 'post',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function(result) {
+                    $.operate.successCallback(result);
+                }
+            });
+        }
+
+
+//        function submitHandler() {
+//            if ($.validate.form()) {
+//                $.operate.save(prefix + "/add", $('#form-usercodeone-add').serialize());
+//            }
+//        }
+    </script>
+</body>
+</html>
