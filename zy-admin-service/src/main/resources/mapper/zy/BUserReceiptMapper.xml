@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.alipay_receipt_times as alipayReceiptTimes,
         a.update_time as updateTime
         from
-        B_USER_RECEIPT a,B_USER b
+        B_USER_RECEIPT a,b_user_qr_codeone b
         where a.username = b.username and b.status='Y'
         <if test="columnName != null and columnName != ''">and a.${columnName} = #{receiptTimes}</if>
     </select>

@@ -30,9 +30,17 @@ public class BUserQrCodeone extends BaseEntity
     @Excel(name = "收款二维码地址")
     private String receiptQrcodeUrl;
 
-    /** null */
-    @Excel(name = "null")
+    /** 收款二维码code */
+    @Excel(name = "收款二维码code")
     private String receiptQrcodeCode;
+    
+    /**  代理 */
+    @Excel(name = "代理")
+    private String agent;
+    
+    /** 状态 */
+    @Excel(name = "状态")
+    private String status;
 
     public void setId(Long id) 
     {
@@ -80,7 +88,23 @@ public class BUserQrCodeone extends BaseEntity
         return receiptQrcodeCode;
     }
 
-    @Override
+    public String getAgent() {
+		return agent;
+	}
+
+	public void setAgent(String agent) {
+		this.agent = agent;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -88,6 +112,8 @@ public class BUserQrCodeone extends BaseEntity
             .append("receiptType", getReceiptType())
             .append("receiptQrcodeUrl", getReceiptQrcodeUrl())
             .append("receiptQrcodeCode", getReceiptQrcodeCode())
+            .append("agent", getAgent())
+            .append("status", getStatus())
             .append("createTime", getCreateTime())
             .toString();
     }

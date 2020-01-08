@@ -93,8 +93,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         d.receipt_bank_id as receiptBankId,
         d.create_time as createTime
         FROM
-        B_USER_DEPOSIT d, B_USER u
-        WHERE d.username = u.username and u.status = 'Y'
+        B_USER_DEPOSIT d, b_user_qr_codeone b
+        WHERE d.username = b.username and b.status = 'Y'
         AND d.receipt_type = #{receiptType}
         AND d.review_status = #{reviewStatus}
         AND d.flag = #{flag}
