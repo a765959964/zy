@@ -235,184 +235,184 @@ import java.awt.image.BufferedImage;
      }
    }
  
-   public ModelAndView pay_bak(@RequestParam Map<String, String> map, HttpServletRequest request) throws Exception {
-     ModelAndView model = new ModelAndView((String)pageMap.get(map.get("pay_type")));
-     synchronized (this) {
-       String ip = HttpUtil.getIp(request);
-       String dtime = DateUtil.parseDateToStr(new Date(), "yyyy-MM-dd HH:mm:ss");
- 
-       logger.info("用户请求IP:" + ip + "进入方法时间" + dtime + "，接收参数" + mapper.writeValueAsString(map));
- 
-       String receiptType = "";
-       if (("1001".equals(map.get("pay_type"))) || ("1002".equals(map.get("pay_type"))))
-         receiptType = "1001";
-       else if (("1003".equals(map.get("pay_type"))) || ("1004".equals(map.get("pay_type")))) {
-         receiptType = "1002";
-       }
-       String message = verification(map);
-       if (StringUtils.isNotBlank(message)) {
-         model.setViewName("pay/error");
-         model.addObject("errorMessage", message);
- 
-         return model;
-       }
-       List depositList = null;
-       UserDeposit userDeposit = null;
- 
-       Map sysParamMap = new HashMap();
- 
-       sysParamMap.put("category", map.get("pay_type"));
-       sysParamMap.put("code", map.get("order_amount"));
-       sysParamMap.put("flag", "Y");
- 
-       SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
-       if (systemParameter != null) {
-         String value = systemParameter.getValue();
- 
-         String[] arr = value.split("#");
-         for (String username : arr) {
-           Map depositMap = new HashMap();
- 
-           depositMap.put("username", username);
-           depositMap.put("receiptType", receiptType);
-           depositMap.put("reviewStatus", "3");
-           depositMap.put("status", "2");
- 
-           depositList = this.userDepositService.findList(depositMap);
-           if ((depositList != null) && (!depositList.isEmpty())) {
-             userDeposit = (UserDeposit)depositList.get(0);
- 
-             break;
-           }
-         }
-       }
- 
-       if (userDeposit == null) {
-         String columnName = "";
-         if ("1001".equals(receiptType))
-           columnName = "wechat_receipt_times";
-         else if ("1002".equals(receiptType)) {
-           columnName = "alipay_receipt_times";
-         }
-         Map receiptMap = new HashMap();
- 
-         receiptMap.put("columnName", columnName);
- 
-         Object miniList = this.userReceiptService.minimumTimes(receiptMap);
-         for (Iterator localIterator = ((List)miniList).iterator(); localIterator.hasNext(); ) { Object miniMap = localIterator.next();
-           Object value = ((Map)miniMap).get("receiptTimes");
- 
-           receiptMap.put("receiptTimes", Long.valueOf(Long.parseLong(String.valueOf(value))));
- 
-           List userReceiptList = this.userReceiptService.findList(receiptMap);
- 
-           Map depositMap = new HashMap();
- 
-           depositMap.put("receiptType", receiptType);
-           depositMap.put("reviewStatus", "3");
-           depositMap.put("flag", "Y");
-           depositMap.put("status", "2");
-           depositMap.put("orderAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
-           depositMap.put("userReceiptList", userReceiptList);
- 
-           depositList = this.userDepositService.available(depositMap);
-           if ((depositList != null) && (!depositList.isEmpty())) {
-             break;
-           }
-         }
-         if ((depositList == null) || (depositList.isEmpty())) {
-           model.setViewName("pay/error");
-           model.addObject("errorMessage", "未获取到二维码，请联系在线客服处理");
- 
-           return model;
-         }
-         Collections.shuffle(depositList);
- 
-         userDeposit = (UserDeposit)depositList.get(randomValue(depositList.size()));
-       }
-       if (userDeposit == null) {
-         model.setViewName("pay/error");
-         model.addObject("errorMessage", "请上传收款码");
- 
-         return model;
-       }
-       BUserQrCode userQRCode = null;
- 
-       Map paramsMap = new HashMap();
- 
-       paramsMap.put("username", userDeposit.getUsername());
-       paramsMap.put("receiptType", userDeposit.getReceiptType());
-       paramsMap.put("receiptAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
- 
-       Object minMap = this.userQRCodeService.minimumTimes(paramsMap);
- 
-       paramsMap.put("matchTimes", Long.valueOf(Long.parseLong(String.valueOf(((Map)minMap).get("matchTimes")))));
- 
-       Object qrList = this.userQRCodeService.findList(paramsMap);
-       if ((qrList == null) || (((List)qrList).isEmpty())) {
-         model.setViewName("pay/error");
-         model.addObject("errorMessage", "未找到相应的存款金额二维码，请联系在线客服");
- 
-         return model;
-       }
-       userQRCode = (BUserQrCode)((List)qrList).get(randomValue(((List)qrList).size()));
- 
-       BUserQrCode qr = new BUserQrCode();
- 
-       qr.setId(userQRCode.getId());
-       qr.setMatchTimes(Long.valueOf(userQRCode.getMatchTimes().longValue() + 1L));
- 
-       this.userQRCodeService.updateBUserQrCode(qr);
- 
-       map.put("depositId", String.valueOf(userDeposit.getId()));
-       map.put("username", userDeposit.getUsername());
-       map.put("payAmount", formatAmount(String.valueOf(userQRCode.getReceiptQrcodeAmount())));
- 
-       Map resultMap = saveData(map);
-       if (StringUtils.isNotEmpty((CharSequence)resultMap.get("sysOrderNo"))) {
-         BUser user = this.userService.get(userDeposit.getUsername());
-         if (StringUtils.isNotBlank(user.getPhoneNumber())) {
-           sysParamMap = new HashMap();
- 
-           sysParamMap.put("category", "9999");
-           sysParamMap.put("code", "SMS");
-           sysParamMap.put("flag", "Y");
- 
-           SSystemParameter tempParameter = this.systemParameterService.get(sysParamMap);
-           if (tempParameter != null) {
-             sysParamMap = new HashMap();
- 
-             sysParamMap.put("category", "8888");
-             sysParamMap.put("code", "SMS_PARAM");
-             sysParamMap.put("flag", "Y");
- 
-             tempParameter = this.systemParameterService.get(sysParamMap);
- 
-             String value = tempParameter.getValue();
- 
-             //SMSUtil.send(value.split("#")[0], value.split("#")[1], user.getPhoneNumber(), null);
-           } else {
-             Map sendMap = new HashMap();
- 
-             sendMap.put("username", user.getUsername());
-             sendMap.put("type", receiptType);
-             sendMap.put("phoneNumber", user.getPhoneNumber());
- 
-             //SMSYXUtil.send(sendMap);
-           }
-         }
-       }
-       String receiptQrcodeUrl = decode(userQRCode.getReceiptQrcodeUrl());
- 
-       model.addObject("orderAmount", formatAmount(String.valueOf(userQRCode.getReceiptQrcodeAmount())));
-       model.addObject("sysOrderNo", resultMap.get("sysOrderNo"));
-       model.addObject("productName", map.get("product_name"));
-       model.addObject("url", receiptQrcodeUrl);
-       model.addObject("remark", resultMap.get("remark"));
- 
-       return model;
-     }
-   }
+//   public ModelAndView pay_bak(@RequestParam Map<String, String> map, HttpServletRequest request) throws Exception {
+//     ModelAndView model = new ModelAndView((String)pageMap.get(map.get("pay_type")));
+//     synchronized (this) {
+//       String ip = HttpUtil.getIp(request);
+//       String dtime = DateUtil.parseDateToStr(new Date(), "yyyy-MM-dd HH:mm:ss");
+// 
+//       logger.info("用户请求IP:" + ip + "进入方法时间" + dtime + "，接收参数" + mapper.writeValueAsString(map));
+// 
+//       String receiptType = "";
+//       if (("1001".equals(map.get("pay_type"))) || ("1002".equals(map.get("pay_type"))))
+//         receiptType = "1001";
+//       else if (("1003".equals(map.get("pay_type"))) || ("1004".equals(map.get("pay_type")))) {
+//         receiptType = "1002";
+//       }
+//       String message = verification(map);
+//       if (StringUtils.isNotBlank(message)) {
+//         model.setViewName("pay/error");
+//         model.addObject("errorMessage", message);
+// 
+//         return model;
+//       }
+//       List depositList = null;
+//       UserDeposit userDeposit = null;
+// 
+//       Map sysParamMap = new HashMap();
+// 
+//       sysParamMap.put("category", map.get("pay_type"));
+//       sysParamMap.put("code", map.get("order_amount"));
+//       sysParamMap.put("flag", "Y");
+// 
+//       SSystemParameter systemParameter = this.systemParameterService.get(sysParamMap);
+//       if (systemParameter != null) {
+//         String value = systemParameter.getValue();
+// 
+//         String[] arr = value.split("#");
+//         for (String username : arr) {
+//           Map depositMap = new HashMap();
+// 
+//           depositMap.put("username", username);
+//           depositMap.put("receiptType", receiptType);
+//           depositMap.put("reviewStatus", "3");
+//           depositMap.put("status", "2");
+// 
+//           depositList = this.userDepositService.findList(depositMap);
+//           if ((depositList != null) && (!depositList.isEmpty())) {
+//             userDeposit = (UserDeposit)depositList.get(0);
+// 
+//             break;
+//           }
+//         }
+//       }
+// 
+//       if (userDeposit == null) {
+//         String columnName = "";
+//         if ("1001".equals(receiptType))
+//           columnName = "wechat_receipt_times";
+//         else if ("1002".equals(receiptType)) {
+//           columnName = "alipay_receipt_times";
+//         }
+//         Map receiptMap = new HashMap();
+// 
+//         receiptMap.put("columnName", columnName);
+// 
+//         Object miniList = this.userReceiptService.minimumTimes(receiptMap);
+//         for (Iterator localIterator = ((List)miniList).iterator(); localIterator.hasNext(); ) { Object miniMap = localIterator.next();
+//           Object value = ((Map)miniMap).get("receiptTimes");
+// 
+//           receiptMap.put("receiptTimes", Long.valueOf(Long.parseLong(String.valueOf(value))));
+// 
+//           List userReceiptList = this.userReceiptService.findList(receiptMap);
+// 
+//           Map depositMap = new HashMap();
+// 
+//           depositMap.put("receiptType", receiptType);
+//           depositMap.put("reviewStatus", "3");
+//           depositMap.put("flag", "Y");
+//           depositMap.put("status", "2");
+//           depositMap.put("orderAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
+//           depositMap.put("userReceiptList", userReceiptList);
+// 
+//           depositList = this.userDepositService.available(depositMap);
+//           if ((depositList != null) && (!depositList.isEmpty())) {
+//             break;
+//           }
+//         }
+//         if ((depositList == null) || (depositList.isEmpty())) {
+//           model.setViewName("pay/error");
+//           model.addObject("errorMessage", "未获取到二维码，请联系在线客服处理");
+// 
+//           return model;
+//         }
+//         Collections.shuffle(depositList);
+// 
+//         userDeposit = (UserDeposit)depositList.get(randomValue(depositList.size()));
+//       }
+//       if (userDeposit == null) {
+//         model.setViewName("pay/error");
+//         model.addObject("errorMessage", "请上传收款码");
+// 
+//         return model;
+//       }
+//       BUserQrCode userQRCode = null;
+// 
+//       Map paramsMap = new HashMap();
+// 
+//       paramsMap.put("username", userDeposit.getUsername());
+//       paramsMap.put("receiptType", userDeposit.getReceiptType());
+//       paramsMap.put("receiptAmount", Long.valueOf(Long.parseLong((String)map.get("order_amount"))));
+// 
+//       Object minMap = this.userQRCodeService.minimumTimes(paramsMap);
+// 
+//       paramsMap.put("matchTimes", Long.valueOf(Long.parseLong(String.valueOf(((Map)minMap).get("matchTimes")))));
+// 
+//       Object qrList = this.userQRCodeService.findList(paramsMap);
+//       if ((qrList == null) || (((List)qrList).isEmpty())) {
+//         model.setViewName("pay/error");
+//         model.addObject("errorMessage", "未找到相应的存款金额二维码，请联系在线客服");
+// 
+//         return model;
+//       }
+//       userQRCode = (BUserQrCode)((List)qrList).get(randomValue(((List)qrList).size()));
+// 
+//       BUserQrCode qr = new BUserQrCode();
+// 
+//       qr.setId(userQRCode.getId());
+//       qr.setMatchTimes(Long.valueOf(userQRCode.getMatchTimes().longValue() + 1L));
+// 
+//       this.userQRCodeService.updateBUserQrCode(qr);
+// 
+//       map.put("depositId", String.valueOf(userDeposit.getId()));
+//       map.put("username", userDeposit.getUsername());
+//       map.put("payAmount", formatAmount(String.valueOf(userQRCode.getReceiptQrcodeAmount())));
+// 
+//       Map resultMap = saveData(map);
+//       if (StringUtils.isNotEmpty((CharSequence)resultMap.get("sysOrderNo"))) {
+//         BUser user = this.userService.get(userDeposit.getUsername());
+//         if (StringUtils.isNotBlank(user.getPhoneNumber())) {
+//           sysParamMap = new HashMap();
+// 
+//           sysParamMap.put("category", "9999");
+//           sysParamMap.put("code", "SMS");
+//           sysParamMap.put("flag", "Y");
+// 
+//           SSystemParameter tempParameter = this.systemParameterService.get(sysParamMap);
+//           if (tempParameter != null) {
+//             sysParamMap = new HashMap();
+// 
+//             sysParamMap.put("category", "8888");
+//             sysParamMap.put("code", "SMS_PARAM");
+//             sysParamMap.put("flag", "Y");
+// 
+//             tempParameter = this.systemParameterService.get(sysParamMap);
+// 
+//             String value = tempParameter.getValue();
+// 
+//             //SMSUtil.send(value.split("#")[0], value.split("#")[1], user.getPhoneNumber(), null);
+//           } else {
+//             Map sendMap = new HashMap();
+// 
+//             sendMap.put("username", user.getUsername());
+//             sendMap.put("type", receiptType);
+//             sendMap.put("phoneNumber", user.getPhoneNumber());
+// 
+//             //SMSYXUtil.send(sendMap);
+//           }
+//         }
+//       }
+//       String receiptQrcodeUrl = decode(userQRCode.getReceiptQrcodeUrl());
+// 
+//       model.addObject("orderAmount", formatAmount(String.valueOf(userQRCode.getReceiptQrcodeAmount())));
+//       model.addObject("sysOrderNo", resultMap.get("sysOrderNo"));
+//       model.addObject("productName", map.get("product_name"));
+//       model.addObject("url", receiptQrcodeUrl);
+//       model.addObject("remark", resultMap.get("remark"));
+// 
+//       return model;
+//     }
+//   }
  
    private String verification(Map<String, String> valuesMap) {
 	 BMerchant merchant = this.merchantService.get((String)valuesMap.get("merchant_no"));
