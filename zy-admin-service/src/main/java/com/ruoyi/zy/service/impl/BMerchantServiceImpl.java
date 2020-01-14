@@ -28,9 +28,9 @@ public class BMerchantServiceImpl implements IBMerchantService
      * @return 商户信息
      */
     @Override
-    public BMerchant get(String merchantNo)
+    public BMerchant selectByMerchatNo(String merchantNo)
     {
-        return bMerchantMapper.get(merchantNo);
+        return bMerchantMapper.selectByMerchatNo(merchantNo);
     }
     
     /**
