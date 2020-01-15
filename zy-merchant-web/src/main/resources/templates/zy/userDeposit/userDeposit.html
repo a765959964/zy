@@ -11,29 +11,28 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <p>收款类型：</p>
-                                <select name="receiptType" th:with="type=${@dict.getType('')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
+								收款类型：<select name="receiptType" th:with="type=${@dict.getType('sys_receipt_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+                            <li>
+                                                                审核状态：<select name="receiptStatus" th:with="type=${@dict.getType('sys_review_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
                             </li>
                             <li>
-                                <p>审核状态：</p>
-                                <select name="reviewStatus">
-                                    <option value="">所有</option>
-                                </select>
-                            </li>
+                                                              是否开启：<select name="flag" th:with="type=${@dict.getType('sys_yes_no')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+                        	</li>
                             <li>
-                            <p>是否开启：</p>
-                            <select name="status">
-                                <option value="">所有</option>
-                            </select>
-                        </li>
-                            <li>
-                                <p>订单状态：</p>
-                                <select name="status">
-                                    <option value="">所有</option>
-                                </select>
+                                                                订单状态：<select name="status" th:with="type=${@dict.getType('sys_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -67,6 +66,10 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('zy:userDeposit:edit')}]];
         var removeFlag = [[${@permission.hasPermi('zy:userDeposit:remove')}]];
+        var receiptTypeDatas = [[${@dict.getType('sys_receipt_type')}]];
+        var reviewStatusDatas = [[${@dict.getType('sys_review_status')}]];
+        var flagDatas = [[${@dict.getType('sys_yes_no')}]];
+        var statusDatas = [[${@dict.getType('sys_status')}]];
         var prefix = ctx + "zy/userDeposit";
 
         $(function() {
@@ -90,9 +93,13 @@
                     title : '用户名'
                 },
                 {
-                    field : 'receiptType',
-                    title : '收款类型'
-                },
+		            field: 'receiptType',
+		            title: '收款类型',
+		            align: "left",
+		            formatter: function(value, item, index) {
+		            	return $.table.selectDictLabel(receiptTypeDatas, item.status);
+		            }
+		        },
                 {
                     field : 'earnestMoney', 
                     title : '保证金金额'
@@ -105,24 +112,35 @@
                     field : 'receiptCommissionAmount', 
                     title : '累计佣金金额'
                 },
-
                 {
-                    field : 'reviewStatus', 
-                    title : '审核状态'
-                },
+		            field: 'reviewStatus',
+		            title: '审核状态',
+		            align: "left",
+		            formatter: function(value, item, index) {
+		            	return $.table.selectDictLabel(reviewStatusDatas, item.status);
+		            }
+		        },
 
                 {
                     field : 'reviewTime', 
                     title : '审核时间'
                 },
                 {
-                    field : 'flag', 
-                    title : '是否开启使用'
-                },
+		            field: 'flag',
+		            title: '是否开启使用',
+		            align: "left",
+		            formatter: function(value, item, index) {
+		            	return $.table.selectDictLabel(flagDatas, item.status);
+		            }
+		        },
                 {
-                    field : 'status', 
-                    title : '订单状态'
-                },
+		            field: 'status',
+		            title: '订单状态',
+		            align: "left",
+		            formatter: function(value, item, index) {
+		            	return $.table.selectDictLabel(statusDatas, item.status);
+		            }
+		        },
                 {
                     field : 'withdrawalFlag',
                     title : '佣金提取标志'

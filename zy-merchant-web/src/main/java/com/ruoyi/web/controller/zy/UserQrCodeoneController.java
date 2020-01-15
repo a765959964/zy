@@ -100,12 +100,9 @@ public class UserQrCodeoneController extends BaseController
             if (!file.isEmpty())
             {
                 String avatar = FileUploadUtils.upload(Global.getUploadPath(), file);
-                System.out.println(Global.getProfile());
                 String filePath =Global.getProfile() +  avatar.substring(8);
                 userQrCodeone.setReceiptQrcodeUrl(avatar);
-//                System.out.println(avatar);
                 String str =  QRCodeUtil.decode(filePath);
-//                System.out.println(str);
                 userQrCodeone.setReceiptQrcodeCode(str);
                 userQrCodeone.setAgent(ShiroUtils.getSysUser().getLoginName());
                 userQrCodeone.setCreateTime(DateUtils.getNowDate());
