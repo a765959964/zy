@@ -95,9 +95,9 @@ public class UserDepositController extends BaseController
                 String avatar = FileUploadUtils.upload(Global.getUploadPath(), file);
 //                System.out.println(avatar);
                 userDeposit.setAgent(ShiroUtils.getSysUser().getLoginName());
-                userDeposit.setEarnestMoney(0.0);
+                userDeposit.setEarnestMoney(0l);
                 userDeposit.setEarnestMoneyUrl(avatar);
-                userDeposit.setReceiptAmount(0.0);
+                userDeposit.setReceiptAmount(0l);
                 userDeposit.setReceiptCommissionAmount(0.0);
                 userDeposit.setReviewStatus("1");
                 userDeposit.setFlag("Y");

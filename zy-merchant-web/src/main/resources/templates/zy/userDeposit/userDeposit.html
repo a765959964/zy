@@ -70,6 +70,7 @@
         var reviewStatusDatas = [[${@dict.getType('sys_review_status')}]];
         var flagDatas = [[${@dict.getType('sys_yes_no')}]];
         var statusDatas = [[${@dict.getType('sys_status')}]];
+        var sysYN =  [[${@dict.getType('sys_y_n')}]];
         var prefix = ctx + "zy/userDeposit";
 
         $(function() {
@@ -88,16 +89,17 @@
                     title : '编号',
                     visible: false
                 },
-                {
-                    field : 'username', 
-                    title : '用户名'
-                },
+//                {
+//                    field : 'username',
+//                    title : '用户名'
+//                },
                 {
 		            field: 'receiptType',
 		            title: '收款类型',
 		            align: "left",
 		            formatter: function(value, item, index) {
-		            	return $.table.selectDictLabel(receiptTypeDatas, item.status);
+		                console.log(item);
+		            	return $.table.selectDictLabel(receiptTypeDatas, item.receiptType);
 		            }
 		        },
                 {
@@ -130,7 +132,7 @@
 		            title: '是否开启使用',
 		            align: "left",
 		            formatter: function(value, item, index) {
-		            	return $.table.selectDictLabel(flagDatas, item.status);
+		            	return $.table.selectDictLabel(flagDatas, item.flag);
 		            }
 		        },
                 {
@@ -141,10 +143,10 @@
 		            	return $.table.selectDictLabel(statusDatas, item.status);
 		            }
 		        },
-                {
-                    field : 'withdrawalFlag',
-                    title : '佣金提取标志'
-                },
+//                {
+//                    field : 'withdrawalFlag',
+//                    title : '佣金提取标志'
+//                },
                 {
                     title: '操作',
                     align: 'center',
