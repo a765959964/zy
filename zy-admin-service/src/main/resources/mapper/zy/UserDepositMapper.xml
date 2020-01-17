@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="UserDeposit" id="UserDepositResult">
         <result property="id"    column="id"    />
         <result property="username"    column="username"    />
+        <result property="agent" column="agent" />
         <result property="earnestMoney"    column="earnest_money"    />
         <result property="earnestMoneyUrl"    column="earnest_money_url"    />
         <result property="receiptType"    column="receipt_type"    />
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserDepositVo">
-        select id, username, earnest_money, earnest_money_url, receipt_type, receipt_amount, receipt_commission_amount, withdrawal_flag, withdrawal_time, confirm_time, review_status, reason, review_time, flag, status, spread_amount, remark, receipt_bank_id, create_time from b_user_deposit
+        select id, username,agent, earnest_money, earnest_money_url, receipt_type, receipt_amount, receipt_commission_amount, withdrawal_flag, withdrawal_time, confirm_time, review_status, reason, review_time, flag, status, spread_amount, remark, receipt_bank_id, create_time from b_user_deposit
     </sql>
 
 	<select id="findList" parameterType="java.util.Map" resultMap="UserDepositResult">
@@ -110,6 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into b_user_deposit
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="username != null  and username != ''">username,</if>
+            <if test="agent != null  and agent != ''">agent,</if>
             <if test="earnestMoney != null ">earnest_money,</if>
             <if test="earnestMoneyUrl != null  and earnestMoneyUrl != ''">earnest_money_url,</if>
             <if test="receiptType != null  and receiptType != ''">receipt_type,</if>
@@ -130,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="username != null  and username != ''">#{username},</if>
+            <if test="agent != null  and agent != ''">#{agent},</if>
             <if test="earnestMoney != null ">#{earnestMoney},</if>
             <if test="earnestMoneyUrl != null  and earnestMoneyUrl != ''">#{earnestMoneyUrl},</if>
             <if test="receiptType != null  and receiptType != ''">#{receiptType},</if>
