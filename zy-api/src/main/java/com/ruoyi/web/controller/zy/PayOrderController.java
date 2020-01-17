@@ -33,18 +33,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping({ "/api/pay/order" })
 public class PayOrderController {
-	private static Logger logger = Logger.getLogger(PayOrderController.class);
+	private final Logger logger = LoggerFactory.getLogger(PayOrderController.class);
 	private static ObjectMapper mapper = new ObjectMapper();
 
 	@Autowired
@@ -77,8 +78,8 @@ public class PayOrderController {
 		pageMap.put("1004", "pay/zfbwap");
 	}
 
-    @RequestMapping(value = "/gateway", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE + "UTF-8")
-	public String pay(@RequestParam Map<String, String> map, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/gateway", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public String gateway(@RequestBody Map<String, String> map, HttpServletRequest request) throws Exception {
 		// ModelAndView model = new
 		// ModelAndView((String)pageMap.get(map.get("pay_type")));
 		synchronized (this) {
@@ -146,8 +147,8 @@ public class PayOrderController {
 			userDeposit = (UserDeposit) depositList.get(randomValue(depositList.size()));
 			if (userDeposit == null) {
 				// 请上传收款码
-				resultMap.put("code", ErrorCode.SC_20003.getCode());
-				resultMap.put("message", ErrorCode.SC_20003.getMessage());
+				resultMap.put("code", ErrorCode.SC_20004.getCode());
+				resultMap.put("message", ErrorCode.SC_20004.getMessage());
 				return mapper.writeValueAsString(resultMap);
 			}
 
@@ -157,8 +158,8 @@ public class PayOrderController {
 			BUserQrCodeone uco = this.userQRCodeOneService.get(paramsMap);
 			if (uco == null) {
 				// 未找到相应的存款二维码，请联系在线客服
-				resultMap.put("code", ErrorCode.SC_20003.getCode());
-				resultMap.put("message", ErrorCode.SC_20003.getMessage());
+				resultMap.put("code", ErrorCode.SC_20005.getCode());
+				resultMap.put("message", ErrorCode.SC_20005.getMessage());
 				return mapper.writeValueAsString(resultMap);
 			}
 
@@ -192,12 +193,12 @@ public class PayOrderController {
 	private String verification(Map<String, String> valuesMap) throws JsonProcessingException {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BMerchant merchant = this.merchantService.get((String) valuesMap.get("merchant_no"));
-			if (merchant == null) {
+			BMerchant merchant = this.merchantService.selectByMerchatNo((String) valuesMap.get("merchant_no"));
+			if (merchant == null) { 
 				// 商户不存在
 				resultMap.put("code", ErrorCode.SC_20000.getCode());
 				resultMap.put("message", ErrorCode.SC_20000.getMessage());
-				return mapper.writeValueAsString(resultMap);
+				return mapper.writeValueAsString(resultMap); 
 			}
 
 			String amounts = (String) valuesMap.get("amount");

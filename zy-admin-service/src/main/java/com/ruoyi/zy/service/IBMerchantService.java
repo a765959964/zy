@@ -18,7 +18,7 @@ public interface IBMerchantService
      * @param merchant_no
      * @return 商户信息
      */
-    public BMerchant get(String merchantNo);
+    public BMerchant selectByMerchatNo(String merchantNo);
 	
     /**
      * 查询商户信息

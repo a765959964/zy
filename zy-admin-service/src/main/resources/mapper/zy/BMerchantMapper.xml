@@ -32,6 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBMerchantVo"/>
         where id = #{id}
     </select>
+    
+    <select id="selectByMerchatNo" parameterType="String" resultMap="BMerchantResult">
+        <include refid="selectBMerchantVo"/>
+        where merchant_no = #{merchantNo}
+    </select>
         
     <insert id="insertBMerchant" parameterType="BMerchant" useGeneratedKeys="true" keyProperty="id">
         insert into b_merchant

@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.zy.domain.UserDeposit;
 import com.ruoyi.zy.service.IUserDepositService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,6 +18,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -92,7 +94,15 @@ public class UserDepositController extends BaseController
             {
                 String avatar = FileUploadUtils.upload(Global.getUploadPath(), file);
 //                System.out.println(avatar);
+                userDeposit.setAgent(ShiroUtils.getSysUser().getLoginName());
+                userDeposit.setEarnestMoney(0.0);
                 userDeposit.setEarnestMoneyUrl(avatar);
+                userDeposit.setReceiptAmount(0.0);
+                userDeposit.setReceiptCommissionAmount(0.0);
+                userDeposit.setReviewStatus("1");
+                userDeposit.setFlag("Y");
+                userDeposit.setStatus("1");
+                userDeposit.setCreateTime(new Date());
                 return toAjax(userDepositService.insertUserDeposit(userDeposit));
             }
             return error();
