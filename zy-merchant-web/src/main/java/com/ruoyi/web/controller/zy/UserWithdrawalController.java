@@ -6,8 +6,9 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.zy.domain.UserWithdrawal;
-import com.ruoyi.zy.service.IUserWithdrawalService;
+import com.ruoyi.zy.domain.BUserWithdrawal;
+import com.ruoyi.zy.service.IBUserWithdrawalService;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,7 @@ public class UserWithdrawalController extends BaseController
     private String prefix = "zy/userWithdrawal";
 
     @Autowired
-    private IUserWithdrawalService userWithdrawalService;
+    private IBUserWithdrawalService userWithdrawalService;
 
     @RequiresPermissions("zy:userWithdrawal:view")
     @GetMapping()
@@ -44,10 +45,10 @@ public class UserWithdrawalController extends BaseController
     @RequiresPermissions("zy:userWithdrawal:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(UserWithdrawal userWithdrawal)
+    public TableDataInfo list(BUserWithdrawal userWithdrawal)
     {
         startPage();
-        List<UserWithdrawal> list = userWithdrawalService.selectUserWithdrawalList(userWithdrawal);
+        List<BUserWithdrawal> list = userWithdrawalService.selectBUserWithdrawalList(userWithdrawal);
         return getDataTable(list);
     }
 
@@ -58,10 +59,10 @@ public class UserWithdrawalController extends BaseController
     @Log(title = "用户提款记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(UserWithdrawal userWithdrawal)
+    public AjaxResult export(BUserWithdrawal userWithdrawal)
     {
-        List<UserWithdrawal> list = userWithdrawalService.selectUserWithdrawalList(userWithdrawal);
-        ExcelUtil<UserWithdrawal> util = new ExcelUtil<UserWithdrawal>(UserWithdrawal.class);
+        List<BUserWithdrawal> list = userWithdrawalService.selectBUserWithdrawalList(userWithdrawal);
+        ExcelUtil<BUserWithdrawal> util = new ExcelUtil<BUserWithdrawal>(BUserWithdrawal.class);
         return util.exportExcel(list, "userWithdrawal");
     }
 
@@ -81,9 +82,9 @@ public class UserWithdrawalController extends BaseController
     @Log(title = "用户提款记录", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(UserWithdrawal userWithdrawal)
+    public AjaxResult addSave(BUserWithdrawal userWithdrawal)
     {
-        return toAjax(userWithdrawalService.insertUserWithdrawal(userWithdrawal));
+        return toAjax(userWithdrawalService.insertBUserWithdrawal(userWithdrawal));
     }
 
     /**
@@ -92,7 +93,7 @@ public class UserWithdrawalController extends BaseController
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
-        UserWithdrawal userWithdrawal = userWithdrawalService.selectUserWithdrawalById(id);
+        BUserWithdrawal userWithdrawal = userWithdrawalService.selectBUserWithdrawalById(id);
         mmap.put("userWithdrawal", userWithdrawal);
         return prefix + "/edit";
     }
@@ -104,9 +105,9 @@ public class UserWithdrawalController extends BaseController
     @Log(title = "用户提款记录", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(UserWithdrawal userWithdrawal)
+    public AjaxResult editSave(BUserWithdrawal userWithdrawal)
     {
-        return toAjax(userWithdrawalService.updateUserWithdrawal(userWithdrawal));
+        return toAjax(userWithdrawalService.updateBUserWithdrawal(userWithdrawal));
     }
 
     /**
@@ -118,6 +119,6 @@ public class UserWithdrawalController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(userWithdrawalService.deleteUserWithdrawalByIds(ids));
+        return toAjax(userWithdrawalService.deleteBUserWithdrawalByIds(ids));
     }
 }

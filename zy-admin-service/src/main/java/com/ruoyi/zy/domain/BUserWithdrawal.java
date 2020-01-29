@@ -9,10 +9,10 @@ import java.util.Date;
 /**
  * 用户提款记录对象 b_user_withdrawal
  * 
- * @author ruoyi
- * @date 2019-11-21
+ * @author zf
+ * @date 2019-11-28
  */
-public class BUserWithdrawal extends BaseEntity
+public class UserWithdrawal extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

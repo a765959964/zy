@@ -8,10 +8,10 @@ import com.ruoyi.common.core.domain.BaseEntity;
 /**
  * 收款码管理对象 b_user_qr_codeone
  * 
- * @author ruoyi
- * @date 2019-12-12
+ * @author zy
+ * @date 2020-01-08
  */
-public class BUserQrCodeone extends BaseEntity
+public class UserQrCodeone extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -30,17 +30,13 @@ public class BUserQrCodeone extends BaseEntity
     @Excel(name = "收款二维码地址")
     private String receiptQrcodeUrl;
 
-    /** 收款二维码code */
-    @Excel(name = "收款二维码code")
+    /** 二维码code */
+    @Excel(name = "二维码code")
     private String receiptQrcodeCode;
-    
-    /**  代理 */
-    @Excel(name = "代理")
+
+    /** 当前登录的用户名 */
+    @Excel(name = "当前登录的用户名")
     private String agent;
-    
-    /** 状态 */
-    @Excel(name = "状态")
-    private String status;
 
     public void setId(Long id) 
     {
@@ -87,24 +83,17 @@ public class BUserQrCodeone extends BaseEntity
     {
         return receiptQrcodeCode;
     }
+    public void setAgent(String agent) 
+    {
+        this.agent = agent;
+    }
 
-    public String getAgent() {
-		return agent;
-	}
+    public String getAgent() 
+    {
+        return agent;
+    }
 
-	public void setAgent(String agent) {
-		this.agent = agent;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	@Override
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -113,7 +102,6 @@ public class BUserQrCodeone extends BaseEntity
             .append("receiptQrcodeUrl", getReceiptQrcodeUrl())
             .append("receiptQrcodeCode", getReceiptQrcodeCode())
             .append("agent", getAgent())
-            .append("status", getStatus())
             .append("createTime", getCreateTime())
             .toString();
     }

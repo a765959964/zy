@@ -9,8 +9,8 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
-import com.ruoyi.zy.domain.UserDeposit;
-import com.ruoyi.zy.service.IUserDepositService;
+import com.ruoyi.zy.domain.BUserDeposit;
+import com.ruoyi.zy.service.IBUserDepositService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class UserDepositController extends BaseController
     private String prefix = "zy/userDeposit";
 
     @Autowired
-    private IUserDepositService userDepositService;
+    private IBUserDepositService userDepositService;
 
     @RequiresPermissions("zy:userDeposit:view")
     @GetMapping()
@@ -49,10 +49,10 @@ public class UserDepositController extends BaseController
     @RequiresPermissions("zy:userDeposit:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(UserDeposit userDeposit)
+    public TableDataInfo list(BUserDeposit userDeposit)
     {
         startPage();
-        List<UserDeposit> list = userDepositService.selectUserDepositList(userDeposit);
+        List<BUserDeposit> list = userDepositService.selectBUserDepositList(userDeposit);
         return getDataTable(list);
     }
 
@@ -63,10 +63,10 @@ public class UserDepositController extends BaseController
     @Log(title = "缴纳保证金记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(UserDeposit userDeposit)
+    public AjaxResult export(BUserDeposit userDeposit)
     {
-        List<UserDeposit> list = userDepositService.selectUserDepositList(userDeposit);
-        ExcelUtil<UserDeposit> util = new ExcelUtil<UserDeposit>(UserDeposit.class);
+        List<BUserDeposit> list = userDepositService.selectBUserDepositList(userDeposit);
+        ExcelUtil<BUserDeposit> util = new ExcelUtil<BUserDeposit>(BUserDeposit.class);
         return util.exportExcel(list, "userDeposit");
     }
 
@@ -86,7 +86,7 @@ public class UserDepositController extends BaseController
     @Log(title = "缴纳保证金记录", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(@RequestParam("file") MultipartFile file,UserDeposit userDeposit)
+    public AjaxResult addSave(@RequestParam("file") MultipartFile file,BUserDeposit userDeposit)
     {
         try
         {
@@ -103,7 +103,7 @@ public class UserDepositController extends BaseController
                 userDeposit.setFlag("Y");
                 userDeposit.setStatus("1");
                 userDeposit.setCreateTime(new Date());
-                return toAjax(userDepositService.insertUserDeposit(userDeposit));
+                return toAjax(userDepositService.insertBUserDeposit(userDeposit));
             }
             return error();
         }
@@ -119,7 +119,7 @@ public class UserDepositController extends BaseController
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
-        UserDeposit userDeposit = userDepositService.selectUserDepositById(id);
+        BUserDeposit userDeposit = userDepositService.selectBUserDepositById(id);
         mmap.put("userDeposit", userDeposit);
         return prefix + "/edit";
     }
@@ -131,7 +131,7 @@ public class UserDepositController extends BaseController
     @Log(title = "缴纳保证金记录", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave( MultipartFile file, UserDeposit userDeposit)
+    public AjaxResult editSave( MultipartFile file, BUserDeposit userDeposit)
     {
 
         try
@@ -140,9 +140,9 @@ public class UserDepositController extends BaseController
             {
                 String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
                 userDeposit.setEarnestMoneyUrl(avatar);
-                return toAjax(userDepositService.updateUserDeposit(userDeposit));
+                return toAjax(userDepositService.updateBUserDeposit(userDeposit));
             }
-            return toAjax(userDepositService.updateUserDeposit(userDeposit));
+            return toAjax(userDepositService.updateBUserDeposit(userDeposit));
         }
         catch (Exception e)
         {
@@ -160,6 +160,6 @@ public class UserDepositController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(userDepositService.deleteUserDepositByIds(ids));
+        return toAjax(userDepositService.deleteBUserDepositByIds(ids));
     }
 }

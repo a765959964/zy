@@ -12,9 +12,9 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.utils.QRCodeUtil;
 import com.ruoyi.zy.domain.BUserReceipt;
-import com.ruoyi.zy.domain.UserQrCodeone;
+import com.ruoyi.zy.domain.BUserQrCodeone;
+import com.ruoyi.zy.service.IBUserQrCodeoneService;
 import com.ruoyi.zy.service.IBUserReceiptService;
-import com.ruoyi.zy.service.IUserQrCodeoneService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class UserQrCodeoneController extends BaseController
     private String prefix = "zy/usercodeone";
 
     @Autowired
-    private IUserQrCodeoneService userQrCodeoneService;
+    private IBUserQrCodeoneService userQrCodeoneService;
 
     @Autowired
     private IBUserReceiptService userReceiptService;
@@ -55,10 +55,10 @@ public class UserQrCodeoneController extends BaseController
     @RequiresPermissions("zy:usercodeone:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(UserQrCodeone userQrCodeone)
+    public TableDataInfo list(BUserQrCodeone userQrCodeone)
     {
         startPage();
-        List<UserQrCodeone> list = userQrCodeoneService.selectUserQrCodeoneList(userQrCodeone);
+        List<BUserQrCodeone> list = userQrCodeoneService.selectBUserQrCodeoneList(userQrCodeone);
         return getDataTable(list);
     }
 
@@ -69,10 +69,10 @@ public class UserQrCodeoneController extends BaseController
     @Log(title = "收款码管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(UserQrCodeone userQrCodeone)
+    public AjaxResult export(BUserQrCodeone userQrCodeone)
     {
-        List<UserQrCodeone> list = userQrCodeoneService.selectUserQrCodeoneList(userQrCodeone);
-        ExcelUtil<UserQrCodeone> util = new ExcelUtil<UserQrCodeone>(UserQrCodeone.class);
+        List<BUserQrCodeone> list = userQrCodeoneService.selectBUserQrCodeoneList(userQrCodeone);
+        ExcelUtil<BUserQrCodeone> util = new ExcelUtil<BUserQrCodeone>(BUserQrCodeone.class);
         return util.exportExcel(list, "usercodeone");
     }
 
@@ -92,7 +92,7 @@ public class UserQrCodeoneController extends BaseController
     @Log(title = "收款码管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(@RequestParam("file") MultipartFile file, UserQrCodeone userQrCodeone)
+    public AjaxResult addSave(@RequestParam("file") MultipartFile file, BUserQrCodeone userQrCodeone)
     {
         BUserReceipt userReceipt = new BUserReceipt();
         try
@@ -107,11 +107,12 @@ public class UserQrCodeoneController extends BaseController
                 userQrCodeone.setAgent(ShiroUtils.getSysUser().getLoginName());
                 userQrCodeone.setCreateTime(DateUtils.getNowDate());
                 userReceipt.setUsername(userQrCodeone.getUsername());
-                userReceipt.setWechatReceiptTimes(0l);
-                userReceipt.setAlipayReceiptTimes(0l);
+                userReceipt.setAgent(ShiroUtils.getSysUser().getLoginName());
+                userReceipt.setWechatReceiptTimes(0);
+                userReceipt.setAlipayReceiptTimes(0);
                 userReceipt.setUpdateTime(DateUtils.getNowDate());
                 userReceiptService.insertBUserReceipt(userReceipt);
-                return toAjax(userQrCodeoneService.insertUserQrCodeone(userQrCodeone));
+                return toAjax(userQrCodeoneService.insertBUserQrCodeone(userQrCodeone));
             }
             return error();
         }
@@ -128,7 +129,7 @@ public class UserQrCodeoneController extends BaseController
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
-        UserQrCodeone userQrCodeone = userQrCodeoneService.selectUserQrCodeoneById(id);
+        BUserQrCodeone userQrCodeone = userQrCodeoneService.selectBUserQrCodeoneById(id);
         mmap.put("userQrCodeone", userQrCodeone);
         return prefix + "/edit";
     }
@@ -140,9 +141,9 @@ public class UserQrCodeoneController extends BaseController
     @Log(title = "收款码管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(UserQrCodeone userQrCodeone)
+    public AjaxResult editSave(BUserQrCodeone userQrCodeone)
     {
-        return toAjax(userQrCodeoneService.updateUserQrCodeone(userQrCodeone));
+        return toAjax(userQrCodeoneService.updateBUserQrCodeone(userQrCodeone));
     }
 
     /**
@@ -154,6 +155,6 @@ public class UserQrCodeoneController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(userQrCodeoneService.deleteUserQrCodeoneByIds(ids));
+        return toAjax(userQrCodeoneService.deleteBUserQrCodeoneByIds(ids));
     }
 }

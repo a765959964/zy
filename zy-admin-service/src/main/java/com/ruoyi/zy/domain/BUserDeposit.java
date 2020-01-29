@@ -7,12 +7,12 @@ import com.ruoyi.common.core.domain.BaseEntity;
 import java.util.Date;
 
 /**
- * 保证金记录对象 b_user_deposit
+ * 缴纳保证金记录对象 b_user_deposit
  * 
- * @author ruoyi
- * @date 2019-11-21
+ * @author zf
+ * @date 2019-11-28
  */
-public class BUserDeposit extends BaseEntity
+public class UserDeposit extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -22,6 +22,9 @@ public class BUserDeposit extends BaseEntity
     /** 用户名 */
     @Excel(name = "用户名")
     private String username;
+
+    @Excel(name = "所属代理")
+    private String agent;
 
     /** 保证金金额 */
     @Excel(name = "保证金金额")
@@ -237,11 +240,20 @@ public class BUserDeposit extends BaseEntity
         return receiptBankId;
     }
 
+    public String getAgent() {
+        return agent;
+    }
+
+    public void setAgent(String agent) {
+        this.agent = agent;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("username", getUsername())
+            .append("agent",getAgent())
             .append("earnestMoney", getEarnestMoney())
             .append("earnestMoneyUrl", getEarnestMoneyUrl())
             .append("receiptType", getReceiptType())
