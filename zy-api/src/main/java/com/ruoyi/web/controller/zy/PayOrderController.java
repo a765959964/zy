@@ -9,12 +9,13 @@ import com.ruoyi.web.utils.HttpUtil;
 import com.ruoyi.web.utils.MD5Util;
 import com.ruoyi.web.zy.common.ErrorCode;
 import com.ruoyi.zy.domain.BMerchant;
+import com.ruoyi.zy.domain.BUserDeposit;
 import com.ruoyi.zy.domain.BUserOrder;
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import com.ruoyi.zy.domain.BUserReceipt;
 import com.ruoyi.zy.domain.MerchantOrder;
 import com.ruoyi.zy.domain.SSystemParameter;
-import com.ruoyi.zy.domain.UserDeposit;
+import com.ruoyi.zy.domain.BUserDeposit;
 import com.ruoyi.zy.service.IBMerchantService;
 import com.ruoyi.zy.service.IBUserDepositService;
 import com.ruoyi.zy.service.IBUserOrderService;
@@ -26,6 +27,7 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -100,8 +102,8 @@ public class PayOrderController {
 			if (StringUtils.isNotBlank(message)) {
 				return message;
 			}
-			List<?> depositList = null;
-			UserDeposit userDeposit = null;
+			List<BUserDeposit> depositList = null;
+			BUserDeposit userDeposit = null;
 
 			String columnName = "";
 			if ("1001".equals(receiptType))
@@ -113,47 +115,61 @@ public class PayOrderController {
 
 			receiptMap.put("columnName", columnName);
 
+			//获取收款次数最少的用户
 			List<Map<String, Object>> miniList = this.userReceiptService.minimumTimes(receiptMap);
-
+			String userName = "";
 			for (Map<String, Object> miniMap : miniList) {
 				Object value = miniMap.get("receiptTimes");
-
+				//根据收款次数查询所有符合的用户
 				receiptMap.put("receiptTimes", Long.valueOf(value.toString()));
-
 				List<BUserReceipt> userReceiptList = this.userReceiptService.findList(receiptMap);
-
-				Map<String, Object> depositMap = new HashMap<String, Object>();
-
-				depositMap.put("receiptType", receiptType);
-				depositMap.put("reviewStatus", "3");
-				depositMap.put("flag", "Y");
-				depositMap.put("status", "2");
-				depositMap.put("orderAmount", Long.valueOf(Long.parseLong(amount)));
-				depositMap.put("userReceiptList", userReceiptList);
-
-				depositList = this.userDepositService.available(depositMap);
-				if ((depositList != null) && (!depositList.isEmpty())) {
+				//查询用户对应的代理 保证金额度是否达到上限，如果未达到 则直接break  返回用户名
+				for (Iterator iterator = userReceiptList.iterator(); iterator.hasNext();) {
+					BUserReceipt bUserReceipt = (BUserReceipt) iterator.next();
+					String agent = bUserReceipt.getAgent();
+					Map<String, Object> depositMap = new HashMap<String, Object>();
+					depositMap.put("receiptType", receiptType);
+					depositMap.put("reviewStatus", "3");
+					depositMap.put("flag", "Y");
+					depositMap.put("status", "2");
+					depositMap.put("orderAmount", Long.valueOf(Long.parseLong(amount)));
+					depositMap.put("agent", agent);
+					depositList = this.userDepositService.available(depositMap);
+					if ((depositList != null) && (!depositList.isEmpty())) {
+						userName = bUserReceipt.getUsername();
+						break;
+					}
+				}
+				if(StringUtils.isNotBlank(userName)) {
 					break;
 				}
 			}
-			if ((depositList == null) || (depositList.isEmpty())) {
-				// 未获取到二维码，请联系在线客服处理
-				resultMap.put("code", ErrorCode.SC_20003.getCode());
-				resultMap.put("message", ErrorCode.SC_20003.getMessage());
+			
+			if(StringUtils.isBlank(userName)) {
+				// 没有可用的二维码
+				resultMap.put("code", ErrorCode.SC_20005.getCode());
+				resultMap.put("message", ErrorCode.SC_20005.getMessage());
 				return mapper.writeValueAsString(resultMap);
 			}
-			Collections.shuffle(depositList);
+//			if ((depositList == null) || (depositList.isEmpty())) {
+//				// 未获取到二维码，请联系在线客服处理
+//				resultMap.put("code", ErrorCode.SC_20003.getCode());
+//				resultMap.put("message", ErrorCode.SC_20003.getMessage());
+//				return mapper.writeValueAsString(resultMap);
+//			}
+//			Collections.shuffle(depositList);
+//
+//			userDeposit = (BUserDeposit) depositList.get(randomValue(depositList.size()));
+//			if (userDeposit == null) {
+//				// 请上传收款码
+//				resultMap.put("code", ErrorCode.SC_20004.getCode());
+//				resultMap.put("message", ErrorCode.SC_20004.getMessage());
+//				return mapper.writeValueAsString(resultMap);
+//			}
 
-			userDeposit = (UserDeposit) depositList.get(randomValue(depositList.size()));
-			if (userDeposit == null) {
-				// 请上传收款码
-				resultMap.put("code", ErrorCode.SC_20004.getCode());
-				resultMap.put("message", ErrorCode.SC_20004.getMessage());
-				return mapper.writeValueAsString(resultMap);
-			}
-
+			//根据用户名去查询对应的二维码
 			Map<String, Object> paramsMap = new HashMap<String, Object>();
-			paramsMap.put("username", userDeposit.getUsername());
+			paramsMap.put("username", userName);
 			paramsMap.put("receiptType", String.valueOf(map.get("pay_type")));
 			BUserQrCodeone uco = this.userQRCodeOneService.get(paramsMap);
 			if (uco == null) {
@@ -163,19 +179,19 @@ public class PayOrderController {
 				return mapper.writeValueAsString(resultMap);
 			}
 
-			map.put("depositId", String.valueOf(userDeposit.getId()));
-			map.put("username", userDeposit.getUsername());
+			//map.put("depositId", String.valueOf(userDeposit.getId()));
+			map.put("username", userName);
 			map.put("payAmount", formatAmount(amount));
 
 			Map<String, Object> saveResultMap = saveData(map);
 			if (StringUtils.isNotEmpty((String) saveResultMap.get("sysOrderNo"))) {
-				resultMap.put("code", ErrorCode.SC_20002.getCode());
-				resultMap.put("message", ErrorCode.SC_20002.getMessage());
+				resultMap.put("code", ErrorCode.SC_10000.getCode());
+				resultMap.put("message", ErrorCode.SC_10000.getMessage());
 				resultMap.put("data", uco.getReceiptQrcodeCode());
 				return mapper.writeValueAsString(resultMap);
 			} else {
-				resultMap.put("code", ErrorCode.SC_20002.getCode());
-				resultMap.put("message", ErrorCode.SC_20002.getMessage());
+				resultMap.put("code", ErrorCode.SC_10001.getCode());
+				resultMap.put("message", ErrorCode.SC_10001.getMessage());
 				return mapper.writeValueAsString(resultMap);
 			}
 
@@ -288,7 +304,7 @@ public class PayOrderController {
 
 		BUserOrder userOrder = new BUserOrder();
 
-		userOrder.setDepositId(Long.valueOf(Long.parseLong((String) valuesMap.get("depositId"))));
+		//userOrder.setDepositId(Long.valueOf(Long.parseLong((String) valuesMap.get("depositId"))));
 		userOrder.setUsername((String) valuesMap.get("username"));
 		userOrder.setMerchantNo((String) valuesMap.get("merchant_no"));
 		userOrder.setSysOrderNo(sysOrderNo);
