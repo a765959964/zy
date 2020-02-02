@@ -20,31 +20,31 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
- * 交易记录Controller
+ * 用户订单记录Controller
  * 
- * @author ruoyi
- * @date 2019-11-21
+ * @author zy
+ * @date 2020-02-02
  */
 @Controller
-@RequestMapping("/zy/order")
+@RequestMapping("/zy/userorder")
 public class BUserOrderController extends BaseController
 {
-    private String prefix = "zy/order";
+    private String prefix = "zy/userorder";
 
     @Autowired
     private IBUserOrderService bUserOrderService;
 
-    @RequiresPermissions("zy:order:view")
+    @RequiresPermissions("zy:userorder:view")
     @GetMapping()
-    public String order()
+    public String userorder()
     {
-        return prefix + "/order";
+        return prefix + "/userorder";
     }
 
     /**
-     * 查询交易记录列表
+     * 查询用户订单记录列表
      */
-    @RequiresPermissions("zy:order:list")
+    @RequiresPermissions("zy:userorder:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(BUserOrder bUserOrder)
@@ -55,21 +55,21 @@ public class BUserOrderController extends BaseController
     }
 
     /**
-     * 导出交易记录列表
+     * 导出用户订单记录列表
      */
-    @RequiresPermissions("zy:order:export")
-    @Log(title = "交易记录", businessType = BusinessType.EXPORT)
+    @RequiresPermissions("zy:userorder:export")
+    @Log(title = "用户订单记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(BUserOrder bUserOrder)
     {
         List<BUserOrder> list = bUserOrderService.selectBUserOrderList(bUserOrder);
         ExcelUtil<BUserOrder> util = new ExcelUtil<BUserOrder>(BUserOrder.class);
-        return util.exportExcel(list, "order");
+        return util.exportExcel(list, "userorder");
     }
 
     /**
-     * 新增交易记录
+     * 新增用户订单记录
      */
     @GetMapping("/add")
     public String add()
@@ -78,10 +78,10 @@ public class BUserOrderController extends BaseController
     }
 
     /**
-     * 新增保存交易记录
+     * 新增保存用户订单记录
      */
-    @RequiresPermissions("zy:order:add")
-    @Log(title = "交易记录", businessType = BusinessType.INSERT)
+    @RequiresPermissions("zy:userorder:add")
+    @Log(title = "用户订单记录", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(BUserOrder bUserOrder)
@@ -90,7 +90,7 @@ public class BUserOrderController extends BaseController
     }
 
     /**
-     * 修改交易记录
+     * 修改用户订单记录
      */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
@@ -101,10 +101,10 @@ public class BUserOrderController extends BaseController
     }
 
     /**
-     * 修改保存交易记录
+     * 修改保存用户订单记录
      */
-    @RequiresPermissions("zy:order:edit")
-    @Log(title = "交易记录", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("zy:userorder:edit")
+    @Log(title = "用户订单记录", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(BUserOrder bUserOrder)
@@ -113,10 +113,10 @@ public class BUserOrderController extends BaseController
     }
 
     /**
-     * 删除交易记录
+     * 删除用户订单记录
      */
-    @RequiresPermissions("zy:order:remove")
-    @Log(title = "交易记录", businessType = BusinessType.DELETE)
+    @RequiresPermissions("zy:userorder:remove")
+    @Log(title = "用户订单记录", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids)

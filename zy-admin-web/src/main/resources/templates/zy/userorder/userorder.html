@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('交易记录列表')" />
+    <th:block th:include="include :: header('用户订单记录列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -11,12 +11,12 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <p>存款编号：</p>
-                                <input type="text" name="depositId"/>
-                            </li>
-                            <li>
                                 <p>用户名：</p>
                                 <input type="text" name="username"/>
+                            </li>
+                            <li>
+                                <p>所属代理：</p>
+                                <input type="text" name="agent"/>
                             </li>
                             <li>
                                 <p>商户号：</p>
@@ -27,39 +27,29 @@
                                 <input type="text" name="sysOrderNo"/>
                             </li>
                             <li>
-                                <p>订单类型：</p>
-                                <select name="orderType" th:with="type=${@dict.getType('')}">
+                                <p>商户订单号：</p>
+                                <input type="text" name="merOrderNo"/>
+                            </li>
+                            <li>
+                                <p>支付方式：</p>
+                                <select name="payType" th:with="type=${@dict.getType('sys_receipt_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <p>订单金额：</p>
-                                <input type="text" name="orderAmount"/>
-                            </li>
-                            <li>
-                                <p>实际支付金额：</p>
-                                <input type="text" name="payAmount"/>
-                            </li>
-                            <li>
                                 <p>订单状态：</p>
-                                <select name="orderStatus">
+                                <select name="orderStatus" th:with="type=${@dict.getType('sys_order_status')}">
                                     <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <p>订单备注：</p>
-                                <input type="text" name="orderRemark"/>
-                            </li>
-                            <li class="select-time">
-                                <p>订单确认时间：</p>
-                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginConfirmTime]"/>
-                                <span>-</span>
-                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endConfirmTime]"/>
-                            </li>
-                            <li>
-                                <p>订单确认人：</p>
-                                <input type="text" name="confirmUser"/>
+                                <p>回调状态：</p>
+                                <select name="notifyStatus" th:with="type=${@dict.getType('sys_notify_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -71,16 +61,16 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:order:add">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="zy:userorder:add">
                     <i class="fa fa-plus"></i> 添加
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:order:edit">
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="zy:userorder:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:order:remove">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="zy:userorder:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="zy:order:export">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="zy:userorder:export">
                     <i class="fa fa-download"></i> 导出
                  </a>
             </div>
@@ -91,9 +81,12 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('zy:order:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('zy:order:remove')}]];
-        var prefix = ctx + "zy/order";
+        var editFlag = [[${@permission.hasPermi('zy:userorder:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('zy:userorder:remove')}]];
+        var payTypeDatas = [[${@dict.getType('sys_receipt_type')}]];
+        var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
+        var notifyStatusDatas = [[${@dict.getType('sys_notify_status')}]];
+        var prefix = ctx + "zy/userorder";
 
         $(function() {
             var options = {
@@ -102,7 +95,7 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
-                modalName: "交易记录",
+                modalName: "用户订单记录",
                 columns: [{
                     checkbox: true
                 },
@@ -112,12 +105,12 @@
                     visible: false
                 },
                 {
-                    field : 'depositId', 
-                    title : '存款编号'
-                },
-                {
                     field : 'username', 
                     title : '用户名'
+                },
+                {
+                    field : 'agent', 
+                    title : '所属代理'
                 },
                 {
                     field : 'merchantNo', 
@@ -128,8 +121,15 @@
                     title : '系统订单号'
                 },
                 {
-                    field : 'orderType', 
-                    title : '订单类型'
+                    field : 'merOrderNo', 
+                    title : '商户订单号'
+                },
+                {
+                    field : 'payType', 
+                    title : '支付方式',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(payTypeDatas, value);
+                    }
                 },
                 {
                     field : 'orderAmount', 
@@ -140,8 +140,23 @@
                     title : '实际支付金额'
                 },
                 {
+                    field : 'orderFeeAmount', 
+                    title : '订单手续费金额'
+                },
+                {
+                    field : 'orderCommissionAmount', 
+                    title : '订单佣金金额'
+                },
+                {
                     field : 'orderStatus', 
-                    title : '订单状态'
+                    title : '订单状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(orderStatusDatas, value);
+                    }
+                },
+                {
+                    field : 'payTime', 
+                    title : '订单创建时间'
                 },
                 {
                     field : 'orderRemark', 
@@ -154,6 +169,25 @@
                 {
                     field : 'confirmUser', 
                     title : '订单确认人'
+                },
+                {
+                    field : 'notifyUrl', 
+                    title : '回调地址'
+                },
+                {
+                    field : 'notifyStatus', 
+                    title : '回调状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(notifyStatusDatas, value);
+                    }
+                },
+                {
+                    field : 'notifyNum', 
+                    title : '回调次数'
+                },
+                {
+                    field : 'failureReason', 
+                    title : '回调失败原因'
                 },
                 {
                     title: '操作',
