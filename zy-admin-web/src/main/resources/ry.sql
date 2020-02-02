@@ -10,10 +10,27 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2020-01-29 23:55:11
+Date: 2020-02-02 21:15:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for b_agent
+-- ----------------------------
+DROP TABLE IF EXISTS `b_agent`;
+CREATE TABLE `b_agent` (
+  `id` int(38) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `agnet_name` varchar(100) NOT NULL COMMENT '代理名称',
+  `agent_no` varchar(50) NOT NULL COMMENT '代理号',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `create_user` varchar(50) NOT NULL COMMENT '创建人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8 COMMENT='代理信息管理';
+
+-- ----------------------------
+-- Records of b_agent
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for b_merchant
@@ -254,31 +271,38 @@ CREATE TABLE `b_user_extend` (
 DROP TABLE IF EXISTS `b_user_order`;
 CREATE TABLE `b_user_order` (
   `id` int(38) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `deposit_id` int(38) DEFAULT NULL COMMENT '存款编号',
   `username` varchar(50) NOT NULL COMMENT '用户名',
+  `agent` varchar(50) NOT NULL COMMENT '所属代理',
   `merchant_no` varchar(50) NOT NULL COMMENT '商户号',
   `sys_order_no` varchar(50) NOT NULL COMMENT '系统订单号',
-  `order_type` varchar(10) NOT NULL COMMENT '订单类型',
+  `mer_order_no` varchar(50) NOT NULL COMMENT '商户订单号',
+  `pay_type` varchar(10) NOT NULL COMMENT '支付方式',
   `order_amount` int(38) NOT NULL COMMENT '订单金额',
-  `pay_amount` double(24,2) DEFAULT NULL COMMENT '实际支付金额',
+  `pay_amount` double(24,2) NOT NULL COMMENT '实际支付金额',
+  `order_fee_amount` double(24,2) NOT NULL COMMENT '订单手续费金额',
+  `order_commission_amount` double(24,2) NOT NULL COMMENT '订单佣金金额',
   `order_status` char(1) NOT NULL COMMENT '订单状态',
+  `pay_time` datetime NOT NULL COMMENT '订单创建时间',
   `order_remark` varchar(50) DEFAULT NULL COMMENT '订单备注',
   `confirm_time` datetime DEFAULT NULL COMMENT '订单确认时间',
   `confirm_user` varchar(50) DEFAULT NULL COMMENT '订单确认人',
-  `create_time` datetime NOT NULL COMMENT '订单创建时间',
+  `notify_url` varchar(100) NOT NULL COMMENT '回调地址',
+  `notify_status` char(1) NOT NULL COMMENT '回调状态',
+  `notify_num` int(38) NOT NULL COMMENT '回调次数',
+  `failure_reason` varchar(500) DEFAULT NULL COMMENT '回调失败原因',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `UNIQUE_INDEX1` (`username`) USING BTREE,
   KEY `UNIQUE_INDEX2` (`order_status`) USING BTREE,
   KEY `UNIQUE_INDEX3` (`create_time`) USING BTREE,
-  KEY `UNIQUE_INDEX4` (`order_type`) USING BTREE,
-  KEY `UNIQUE_INDEX5` (`username`,`order_type`,`order_status`) USING BTREE,
-  KEY `UNIQUE_INDEX6` (`username`,`order_type`,`order_status`,`create_time`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  KEY `UNIQUE_INDEX4` (`pay_type`) USING BTREE,
+  KEY `UNIQUE_INDEX5` (`username`,`pay_type`,`order_status`) USING BTREE,
+  KEY `UNIQUE_INDEX6` (`username`,`pay_type`,`order_status`,`create_time`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户订单记录';
 
 -- ----------------------------
 -- Records of b_user_order
 -- ----------------------------
-INSERT INTO `b_user_order` VALUES ('1', null, 'venn', 'venn', '202001222344338090001', '1001', '100', '100.00', '1', 'gdrh', null, null, '2020-01-22 23:44:34');
 
 -- ----------------------------
 -- Table structure for b_user_qr_code
@@ -391,7 +415,7 @@ CREATE TABLE `gen_table` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`table_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COMMENT='代码生成业务表';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='代码生成业务表';
 
 -- ----------------------------
 -- Records of gen_table
@@ -404,7 +428,6 @@ INSERT INTO `gen_table` VALUES ('10', 'b_user', '用户管理表', 'BUser', 'cru
 INSERT INTO `gen_table` VALUES ('11', 'sys_user', '用户信息表', 'SysUser', 'crud', 'com.ruoyi.system', 'system', 'user', '用户信息', 'ruoyi', null, 'admin', '2019-11-22 06:48:02', '', null, null);
 INSERT INTO `gen_table` VALUES ('12', 'b_user_deposit', '缴纳保证金记录', 'UserDeposit', 'crud', 'com.ruoyi.zy', 'zy', 'userDeposit', '缴纳保证金记录', 'zf', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-11-22 07:33:31', '', '2019-11-28 17:47:09', '');
 INSERT INTO `gen_table` VALUES ('13', 'b_user_extend', '收款码管理', 'BUserExtend', 'crud', 'com.ruoyi.zy', 'zy', 'extend', '收款码管理', 'ruoyi', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-11-22 07:33:39', '', '2019-11-22 07:38:16', '');
-INSERT INTO `gen_table` VALUES ('14', 'b_user_order', '交易记录', 'BUserOrder', 'crud', 'com.ruoyi.zy', 'zy', 'order', '交易记录', 'ruoyi', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-11-22 07:33:43', '', '2019-11-22 07:38:38', '');
 INSERT INTO `gen_table` VALUES ('15', 'b_user_withdrawal', '用户提款记录', 'UserWithdrawal', 'crud', 'com.ruoyi.zy', 'zy', 'userWithdrawal', '用户提款记录', 'zf', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-11-22 07:33:48', '', '2019-11-28 17:48:43', '');
 INSERT INTO `gen_table` VALUES ('16', 'b_receipt_bank', '银行收据', 'ReceiptBank', 'crud', 'com.ruoyi.zy', 'zy', 'receiptBank', '银行收据', 'zf', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-11-28 21:49:02', '', '2019-12-01 03:16:32', '');
 INSERT INTO `gen_table` VALUES ('17', 'b_user_qr_code', '用户收款码表', 'BUserQrCode', 'crud', 'com.ruoyi.zy', 'zy', 'qrcode', '用户收款码表', 'ruoyi', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-12-13 07:37:20', '', '2019-12-13 07:51:22', '');
@@ -412,6 +435,7 @@ INSERT INTO `gen_table` VALUES ('19', 's_system_parameter', '系统参数表', '
 INSERT INTO `gen_table` VALUES ('20', 'b_user_receipt', '收款次数', 'BUserReceipt', 'crud', 'com.ruoyi.zy', 'zy', 'receipt', '收款次数', 'ruoyi', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-12-18 07:56:44', '', '2019-12-18 07:57:14', '');
 INSERT INTO `gen_table` VALUES ('21', 'b_merchant_bank', '商户银行卡', 'MerchantBank', 'crud', 'com.ruoyi.zy', 'zf', 'merchantBank', '商户银行卡', 'zy', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2019-12-18 22:20:23', '', '2019-12-18 22:22:56', '');
 INSERT INTO `gen_table` VALUES ('22', 'b_user_qr_codeone', '收款码管理', 'UserQrCodeone', 'crud', 'com.ruoyi.zy', 'zy', 'usercodeone', '收款码管理', 'zy', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2020-01-08 17:38:11', '', '2020-01-08 17:40:01', '');
+INSERT INTO `gen_table` VALUES ('23', 'b_user_order', '用户订单记录', 'BUserOrder', 'crud', 'com.ruoyi.zy', 'zy', 'userorder', '用户订单记录', 'zy', '{\"treeName\":\"\",\"treeParentCode\":\"\",\"treeCode\":\"\"}', 'admin', '2020-02-02 16:59:47', '', '2020-02-02 18:24:53', '');
 
 -- ----------------------------
 -- Table structure for gen_table_column
@@ -441,7 +465,7 @@ CREATE TABLE `gen_table_column` (
   `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`column_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=246 DEFAULT CHARSET=utf8 COMMENT='代码生成业务表字段';
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=utf8 COMMENT='代码生成业务表字段';
 
 -- ----------------------------
 -- Records of gen_table_column
@@ -556,19 +580,6 @@ INSERT INTO `gen_table_column` VALUES ('160', '13', 'alipay_flag', '支付宝收
 INSERT INTO `gen_table_column` VALUES ('161', '13', 'alipay_reason', '支付宝收款码驳回原因', 'varchar(100)', 'String', 'alipayReason', '0', '0', null, '1', '1', '1', '1', 'EQ', 'input', '', '6', 'admin', '2019-11-22 07:33:41', null, '2019-11-22 07:38:18');
 INSERT INTO `gen_table_column` VALUES ('162', '13', 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '1', '1', null, null, null, 'EQ', 'datetime', '', '7', 'admin', '2019-11-22 07:33:41', null, '2019-11-22 07:38:18');
 INSERT INTO `gen_table_column` VALUES ('163', '13', 'update_time', '修改时间', 'datetime', 'Date', 'updateTime', '0', '0', '1', '1', '1', null, null, 'EQ', 'datetime', '', '8', 'admin', '2019-11-22 07:33:42', null, '2019-11-22 07:38:19');
-INSERT INTO `gen_table_column` VALUES ('164', '14', 'id', '编号', 'int(38)', 'Long', 'id', '1', '1', null, '1', null, null, null, 'EQ', 'input', '', '1', 'admin', '2019-11-22 07:33:43', null, '2019-11-22 07:38:38');
-INSERT INTO `gen_table_column` VALUES ('165', '14', 'deposit_id', '存款编号', 'int(38)', 'Long', 'depositId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '2', 'admin', '2019-11-22 07:33:44', null, '2019-11-22 07:38:39');
-INSERT INTO `gen_table_column` VALUES ('166', '14', 'username', '用户名', 'varchar(50)', 'String', 'username', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', '3', 'admin', '2019-11-22 07:33:44', null, '2019-11-22 07:38:39');
-INSERT INTO `gen_table_column` VALUES ('167', '14', 'merchant_no', '商户号', 'varchar(50)', 'String', 'merchantNo', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '4', 'admin', '2019-11-22 07:33:45', null, '2019-11-22 07:38:39');
-INSERT INTO `gen_table_column` VALUES ('168', '14', 'sys_order_no', '系统订单号', 'varchar(50)', 'String', 'sysOrderNo', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '5', 'admin', '2019-11-22 07:33:45', null, '2019-11-22 07:38:40');
-INSERT INTO `gen_table_column` VALUES ('169', '14', 'order_type', '订单类型', 'varchar(10)', 'String', 'orderType', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'select', '', '6', 'admin', '2019-11-22 07:33:45', null, '2019-11-22 07:38:40');
-INSERT INTO `gen_table_column` VALUES ('170', '14', 'order_amount', '订单金额', 'int(38)', 'Long', 'orderAmount', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '7', 'admin', '2019-11-22 07:33:46', null, '2019-11-22 07:38:40');
-INSERT INTO `gen_table_column` VALUES ('171', '14', 'pay_amount', '实际支付金额', 'double(24,2)', 'Double', 'payAmount', '0', '0', null, '1', '1', '1', '1', 'EQ', 'input', '', '8', 'admin', '2019-11-22 07:33:46', null, '2019-11-22 07:38:41');
-INSERT INTO `gen_table_column` VALUES ('172', '14', 'order_status', '订单状态', 'char(1)', 'String', 'orderStatus', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'radio', '', '9', 'admin', '2019-11-22 07:33:46', null, '2019-11-22 07:38:41');
-INSERT INTO `gen_table_column` VALUES ('173', '14', 'order_remark', '订单备注', 'varchar(50)', 'String', 'orderRemark', '0', '0', null, '1', '1', '1', '1', 'EQ', 'input', '', '10', 'admin', '2019-11-22 07:33:47', null, '2019-11-22 07:38:41');
-INSERT INTO `gen_table_column` VALUES ('174', '14', 'confirm_time', '订单确认时间', 'datetime', 'Date', 'confirmTime', '0', '0', null, '1', '1', '1', '1', 'EQ', 'datetime', '', '11', 'admin', '2019-11-22 07:33:47', null, '2019-11-22 07:38:42');
-INSERT INTO `gen_table_column` VALUES ('175', '14', 'confirm_user', '订单确认人', 'varchar(50)', 'String', 'confirmUser', '0', '0', null, '1', '1', '1', '1', 'EQ', 'input', '', '12', 'admin', '2019-11-22 07:33:47', null, '2019-11-22 07:38:42');
-INSERT INTO `gen_table_column` VALUES ('176', '14', 'create_time', '订单创建时间', 'datetime', 'Date', 'createTime', '0', '0', '1', '1', null, null, null, 'EQ', 'datetime', '', '13', 'admin', '2019-11-22 07:33:48', null, '2019-11-22 07:38:42');
 INSERT INTO `gen_table_column` VALUES ('177', '15', 'id', '编号', 'int(38)', 'Long', 'id', '1', '1', null, '1', null, null, null, 'EQ', 'input', '', '1', 'admin', '2019-11-22 07:33:49', null, '2019-11-28 17:48:43');
 INSERT INTO `gen_table_column` VALUES ('178', '15', 'deposit_id', '存款编号', 'int(38)', 'Long', 'depositId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '2', 'admin', '2019-11-22 07:33:49', null, '2019-11-28 17:48:43');
 INSERT INTO `gen_table_column` VALUES ('179', '15', 'username', '用户名', 'varchar(50)', 'String', 'username', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', '3', 'admin', '2019-11-22 07:33:49', null, '2019-11-28 17:48:43');
@@ -632,6 +643,27 @@ INSERT INTO `gen_table_column` VALUES ('242', '22', 'receipt_qrcode_url', '收�
 INSERT INTO `gen_table_column` VALUES ('243', '22', 'receipt_qrcode_code', '二维码code', 'varchar(128)', 'String', 'receiptQrcodeCode', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', '5', 'admin', '2020-01-08 17:38:11', null, '2020-01-08 17:40:01');
 INSERT INTO `gen_table_column` VALUES ('244', '22', 'agent', '当前登录的用户名', 'varchar(255)', 'String', 'agent', '0', '0', null, '1', '1', '1', '1', 'EQ', 'input', '', '6', 'admin', '2020-01-08 17:38:11', null, '2020-01-08 17:40:01');
 INSERT INTO `gen_table_column` VALUES ('245', '22', 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '1', '1', null, null, null, 'EQ', 'datetime', '', '7', 'admin', '2020-01-08 17:38:11', null, '2020-01-08 17:40:01');
+INSERT INTO `gen_table_column` VALUES ('246', '23', 'id', '编号', 'int(38)', 'Long', 'id', '1', '1', null, '1', null, null, null, 'EQ', 'input', '', '1', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('247', '23', 'username', '用户名', 'varchar(50)', 'String', 'username', '0', '0', null, '1', null, '1', '1', 'EQ', 'input', '', '2', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('248', '23', 'agent', '所属代理', 'varchar(50)', 'String', 'agent', '0', '0', null, '1', null, '1', '1', 'EQ', 'input', '', '3', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('249', '23', 'merchant_no', '商户号', 'varchar(50)', 'String', 'merchantNo', '0', '0', null, '1', null, '1', '1', 'EQ', 'input', '', '4', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('250', '23', 'sys_order_no', '系统订单号', 'varchar(50)', 'String', 'sysOrderNo', '0', '0', null, '1', null, '1', '1', 'EQ', 'input', '', '5', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('251', '23', 'mer_order_no', '商户订单号', 'varchar(50)', 'String', 'merOrderNo', '0', '0', null, '1', null, '1', '1', 'EQ', 'input', '', '6', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('252', '23', 'pay_type', '支付方式', 'varchar(10)', 'String', 'payType', '0', '0', null, '1', null, '1', '1', 'EQ', 'select', 'sys_receipt_type', '7', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('253', '23', 'order_amount', '订单金额', 'int(38)', 'Long', 'orderAmount', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '8', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('254', '23', 'pay_amount', '实际支付金额', 'double(24,2)', 'Double', 'payAmount', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '9', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('255', '23', 'order_fee_amount', '订单手续费金额', 'double(24,2)', 'Double', 'orderFeeAmount', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '10', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('256', '23', 'order_commission_amount', '订单佣金金额', 'double(24,2)', 'Double', 'orderCommissionAmount', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '11', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('257', '23', 'order_status', '订单状态', 'char(1)', 'String', 'orderStatus', '0', '0', null, '1', null, '1', '1', 'EQ', 'select', 'sys_order_status', '12', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('258', '23', 'pay_time', '订单创建时间', 'datetime', 'Date', 'payTime', '0', '0', null, '1', null, '1', null, 'EQ', 'datetime', '', '13', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('259', '23', 'order_remark', '订单备注', 'varchar(50)', 'String', 'orderRemark', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '14', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('260', '23', 'confirm_time', '订单确认时间', 'datetime', 'Date', 'confirmTime', '0', '0', null, '1', null, '1', null, 'EQ', 'datetime', '', '15', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('261', '23', 'confirm_user', '订单确认人', 'varchar(50)', 'String', 'confirmUser', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '16', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('262', '23', 'notify_url', '回调地址', 'varchar(100)', 'String', 'notifyUrl', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '17', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('263', '23', 'notify_status', '回调状态', 'char(1)', 'String', 'notifyStatus', '0', '0', null, '1', null, '1', '1', 'EQ', 'select', 'sys_notify_status', '18', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:53');
+INSERT INTO `gen_table_column` VALUES ('264', '23', 'notify_num', '回调次数', 'int(38)', 'Long', 'notifyNum', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '19', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:54');
+INSERT INTO `gen_table_column` VALUES ('265', '23', 'failure_reason', '回调失败原因', 'varchar(500)', 'String', 'failureReason', '0', '0', null, '1', null, '1', null, 'EQ', 'input', '', '20', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:54');
+INSERT INTO `gen_table_column` VALUES ('266', '23', 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', null, '1', null, null, null, 'EQ', 'datetime', '', '21', 'admin', '2020-02-02 16:59:47', null, '2020-02-02 18:24:54');
 
 -- ----------------------------
 -- Table structure for qrtz_blob_triggers
@@ -778,7 +810,7 @@ CREATE TABLE `qrtz_scheduler_state` (
 -- ----------------------------
 -- Records of qrtz_scheduler_state
 -- ----------------------------
-INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'DESKTOP-24UE4NK1580312168330', '1580313312473', '15000');
+INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'DESKTOP-24UE4NK1580639251925', '1580648076790', '15000');
 
 -- ----------------------------
 -- Table structure for qrtz_simple_triggers
@@ -939,7 +971,7 @@ CREATE TABLE `sys_dict_data` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`dict_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COMMENT='字典数据表';
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COMMENT='字典数据表';
 
 -- ----------------------------
 -- Records of sys_dict_data
@@ -981,6 +1013,11 @@ INSERT INTO `sys_dict_data` VALUES ('34', '1', '未确认', '1', 'sys_status', n
 INSERT INTO `sys_dict_data` VALUES ('35', '2', '已确认', '2', 'sys_status', null, null, 'N', '0', 'admin', '2019-11-29 19:03:48', '', null, null);
 INSERT INTO `sys_dict_data` VALUES ('36', '1', 'Y', '开启', 'sys_y_n', '', '', 'Y', '0', 'admin', '2020-01-17 18:18:13', 'admin', '2020-01-17 18:18:50', '');
 INSERT INTO `sys_dict_data` VALUES ('37', '2', 'N', '关闭', 'sys_y_n', '', '', 'Y', '0', 'admin', '2020-01-17 18:18:31', 'admin', '2020-01-17 18:18:44', '');
+INSERT INTO `sys_dict_data` VALUES ('38', '1', '未支付', '0', 'sys_order_status', null, null, 'Y', '0', 'admin', '2020-02-02 18:22:40', '', null, null);
+INSERT INTO `sys_dict_data` VALUES ('39', '2', '已支付', '1', 'sys_order_status', null, null, 'Y', '0', 'admin', '2020-02-02 18:22:49', '', null, null);
+INSERT INTO `sys_dict_data` VALUES ('40', '1', '未回调', '0', 'sys_notify_status', null, null, 'Y', '0', 'admin', '2020-02-02 18:23:18', '', null, null);
+INSERT INTO `sys_dict_data` VALUES ('41', '2', '回调失败', '1', 'sys_notify_status', null, null, 'Y', '0', 'admin', '2020-02-02 18:23:35', '', null, null);
+INSERT INTO `sys_dict_data` VALUES ('42', '3', '回调成功', '2', 'sys_notify_status', null, null, 'Y', '0', 'admin', '2020-02-02 18:23:50', '', null, null);
 
 -- ----------------------------
 -- Table structure for sys_dict_type
@@ -998,7 +1035,7 @@ CREATE TABLE `sys_dict_type` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`dict_id`),
   UNIQUE KEY `dict_type` (`dict_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='字典类型表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='字典类型表';
 
 -- ----------------------------
 -- Records of sys_dict_type
@@ -1015,6 +1052,8 @@ INSERT INTO `sys_dict_type` VALUES ('9', '操作类型', 'sys_oper_type', '0', '
 INSERT INTO `sys_dict_type` VALUES ('10', '系统状态', 'sys_common_status', '0', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '登录状态列表');
 INSERT INTO `sys_dict_type` VALUES ('11', '收款类型', 'sys_receipt_type', '0', 'admin', '2019-11-29 19:03:03', '', null, '收款类型');
 INSERT INTO `sys_dict_type` VALUES ('12', '是否开启使用YN', 'sys_y_n', '0', 'admin', '2020-01-17 18:17:44', '', null, '是否开启使用 Y开启 N关闭');
+INSERT INTO `sys_dict_type` VALUES ('13', '订单状态', 'sys_order_status', '0', 'admin', '2020-02-02 18:07:09', 'admin', '2020-02-02 18:07:53', '0未支付 1已支付');
+INSERT INTO `sys_dict_type` VALUES ('14', '回调状态', 'sys_notify_status', '0', 'admin', '2020-02-02 18:08:42', '', null, '0未回调 1回调失败 2回调成功');
 
 -- ----------------------------
 -- Table structure for sys_job
@@ -1076,7 +1115,7 @@ CREATE TABLE `sys_logininfor` (
   `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
   `login_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=217 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
+) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -1198,6 +1237,15 @@ INSERT INTO `sys_logininfor` VALUES ('213', 'admin', '127.0.0.1', '内网IP', 'O
 INSERT INTO `sys_logininfor` VALUES ('214', 'admin', '127.0.0.1', '内网IP', 'Opera 12', 'Windows Vista', '0', '登录成功', '2020-01-17 18:12:07');
 INSERT INTO `sys_logininfor` VALUES ('215', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '退出成功', '2020-01-20 22:33:48');
 INSERT INTO `sys_logininfor` VALUES ('216', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '登录成功', '2020-01-20 22:34:04');
+INSERT INTO `sys_logininfor` VALUES ('217', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '退出成功', '2020-01-30 22:13:48');
+INSERT INTO `sys_logininfor` VALUES ('218', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '登录成功', '2020-01-30 22:13:59');
+INSERT INTO `sys_logininfor` VALUES ('219', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '退出成功', '2020-01-30 22:18:24');
+INSERT INTO `sys_logininfor` VALUES ('220', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '1', '验证码错误', '2020-01-30 22:18:28');
+INSERT INTO `sys_logininfor` VALUES ('221', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '登录成功', '2020-01-30 22:18:34');
+INSERT INTO `sys_logininfor` VALUES ('222', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '退出成功', '2020-01-30 22:26:15');
+INSERT INTO `sys_logininfor` VALUES ('223', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '登录成功', '2020-01-30 22:26:24');
+INSERT INTO `sys_logininfor` VALUES ('224', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '退出成功', '2020-02-02 17:52:11');
+INSERT INTO `sys_logininfor` VALUES ('225', 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', '0', '登录成功', '2020-02-02 17:52:17');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -1322,24 +1370,24 @@ INSERT INTO `sys_menu` VALUES ('2039', '商户用户信息新增', '2037', '2', 
 INSERT INTO `sys_menu` VALUES ('2040', '商户用户信息修改', '2037', '3', '#', '', 'F', '0', 'zy:merchantUser:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2041', '商户用户信息删除', '2037', '4', '#', '', 'F', '0', 'zy:merchantUser:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2042', '商户用户信息导出', '2037', '5', '#', '', 'F', '0', 'zy:merchantUser:export', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('2043', '商户订单记录', '2012', '2', '/zy/merchantOrder', 'menuItem', 'C', '0', 'zy:merchantOrder:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-11-20 15:25:18', '商户订单记录菜单');
+INSERT INTO `sys_menu` VALUES ('2043', '用户订单记录', '2012', '2', '/zy/userorder', 'menuItem', 'C', '0', 'zy:userorder:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-11-20 15:25:18', '用户订单记录菜单');
 INSERT INTO `sys_menu` VALUES ('2044', '商户订单记录查询', '2043', '1', '#', '', 'F', '0', 'zy:merchantOrder:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2045', '商户订单记录新增', '2043', '2', '#', '', 'F', '0', 'zy:merchantOrder:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2046', '商户订单记录修改', '2043', '3', '#', '', 'F', '0', 'zy:merchantOrder:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2047', '商户订单记录删除', '2043', '4', '#', '', 'F', '0', 'zy:merchantOrder:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2048', '商户订单记录导出', '2043', '5', '#', '', 'F', '0', 'zy:merchantOrder:export', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('2049', '提款记录', '2012', '3', '/zy/merchantWithdrawal', 'menuItem', 'C', '0', 'zy:merchantWithdrawal:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-11-20 15:25:33', '提款记录菜单');
+INSERT INTO `sys_menu` VALUES ('2049', '商户提款', '4', '4', '/zy/merchantWithdrawal', 'menuItem', 'C', '0', 'zy:merchantWithdrawal:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:18:20', '提款记录菜单');
 INSERT INTO `sys_menu` VALUES ('2050', '提款记录查询', '2049', '1', '#', '', 'F', '0', 'zy:merchantWithdrawal:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2051', '提款记录新增', '2049', '2', '#', '', 'F', '0', 'zy:merchantWithdrawal:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2052', '提款记录修改', '2049', '3', '#', '', 'F', '0', 'zy:merchantWithdrawal:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2053', '提款记录删除', '2049', '4', '#', '', 'F', '0', 'zy:merchantWithdrawal:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('2054', '提款记录导出', '2049', '5', '#', '', 'F', '0', 'zy:merchantWithdrawal:export', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('4000', '账户管理', '4', '1', '/zy/bank', '', 'C', '0', 'zy:bank:view', 'fa fa-gear', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '账户管理');
+INSERT INTO `sys_menu` VALUES ('4000', '账户管理', '4', '1', '/zy/bank', 'menuItem', 'C', '1', 'zy:bank:view', 'fa fa-gear', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:12:32', '账户管理');
 INSERT INTO `sys_menu` VALUES ('4001', '账户查询', '4000', '1', '#', '', 'F', '0', 'zy:bank:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4002', '账户新增', '4000', '2', '#', '', 'F', '0', 'zy:bank:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4003', '账户修改', '4000', '3', '#', '', 'F', '0', 'zy:bank:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4004', '账户删除', '4000', '4', '#', '', 'F', '0', 'zy:bank:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('4100', '用户管理', '4', '2', '/zy/user', '', 'C', '0', 'zy:user:view', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '用户管理菜单');
+INSERT INTO `sys_menu` VALUES ('4100', '用户管理', '4', '2', '/zy/user', 'menuItem', 'C', '1', 'zy:user:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:12:45', '用户管理菜单');
 INSERT INTO `sys_menu` VALUES ('4101', '用户管理查询', '4100', '1', '#', '', 'F', '0', 'zy:user:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4102', '用户管理新增', '4100', '2', '#', '', 'F', '0', 'zy:user:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4103', '用户管理修改', '4100', '3', '#', '', 'F', '0', 'zy:user:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
@@ -1349,7 +1397,7 @@ INSERT INTO `sys_menu` VALUES ('4201', '商户信息查询', '4200', '1', '#', '
 INSERT INTO `sys_menu` VALUES ('4202', '商户信息新增', '4200', '2', '#', '', 'F', '0', 'zy:merchant:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4203', '商户信息修改', '4200', '3', '#', '', 'F', '0', 'zy:merchant:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4204', '商户信息删除', '4200', '4', '#', '', 'F', '0', 'zy:merchant:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('4205', '用户提款记录', '4211', '3', '/zy/userWithdrawal', 'menuItem', 'C', '0', 'zy:userWithdrawal:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-11-28 17:56:53', '用户提款记录菜单');
+INSERT INTO `sys_menu` VALUES ('4205', '用户提款记录', '4211', '3', '/zy/userWithdrawal', 'menuItem', 'C', '1', 'zy:userWithdrawal:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:12:26', '用户提款记录菜单');
 INSERT INTO `sys_menu` VALUES ('4206', '用户提款记录查询', '4205', '1', '#', '', 'F', '0', 'zy:userWithdrawal:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4207', '用户提款记录新增', '4205', '2', '#', '', 'F', '0', 'zy:userWithdrawal:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4208', '用户提款记录修改', '4205', '3', '#', '', 'F', '0', 'zy:userWithdrawal:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
@@ -1362,13 +1410,13 @@ INSERT INTO `sys_menu` VALUES ('4214', '缴纳保证金记录新增', '4212', '2
 INSERT INTO `sys_menu` VALUES ('4215', '缴纳保证金记录修改', '4212', '3', '#', '', 'F', '0', 'zy:userDeposit:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4216', '缴纳保证金记录删除', '4212', '4', '#', '', 'F', '0', 'zy:userDeposit:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4217', '缴纳保证金记录导出', '4212', '5', '#', '', 'F', '0', 'zy:userDeposit:export', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('4218', '银行收据', '4211', '1', '/zy/receiptBank', 'menuItem', 'C', '0', 'zy:receiptBank:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-11-28 21:54:51', '银行收据菜单');
+INSERT INTO `sys_menu` VALUES ('4218', '银行收据', '4211', '1', '/zy/receiptBank', 'menuItem', 'C', '1', 'zy:receiptBank:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:11:21', '银行收据菜单');
 INSERT INTO `sys_menu` VALUES ('4219', '银行收据查询', '4218', '1', '#', '', 'F', '0', 'zy:receiptBank:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4220', '银行收据新增', '4218', '2', '#', '', 'F', '0', 'zy:receiptBank:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4221', '银行收据修改', '4218', '3', '#', '', 'F', '0', 'zy:receiptBank:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4222', '银行收据删除', '4218', '4', '#', '', 'F', '0', 'zy:receiptBank:remove', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4223', '银行收据导出', '4218', '5', '#', '', 'F', '0', 'zy:receiptBank:export', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
-INSERT INTO `sys_menu` VALUES ('4224', '账户管理', '2012', '1', '/zy/merchantBank', 'menuItem', 'C', '0', 'zy:merchantBank:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2019-12-18 22:48:16', '商户银行卡菜单');
+INSERT INTO `sys_menu` VALUES ('4224', '账户管理', '2012', '1', '/zy/merchantBank', 'menuItem', 'C', '1', 'zy:merchantBank:view', '#', 'admin', '2018-03-01 00:00:00', 'admin', '2020-01-30 22:23:38', '商户银行卡菜单');
 INSERT INTO `sys_menu` VALUES ('4225', '商户银行卡查询', '4224', '1', '#', '', 'F', '0', 'zy:merchantBank:list', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4226', '商户银行卡新增', '4224', '2', '#', '', 'F', '0', 'zy:merchantBank:add', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
 INSERT INTO `sys_menu` VALUES ('4227', '商户银行卡修改', '4224', '3', '#', '', 'F', '0', 'zy:merchantBank:edit', '#', 'admin', '2018-03-01 00:00:00', 'ry', '2018-03-01 00:00:00', '');
@@ -1427,7 +1475,7 @@ CREATE TABLE `sys_oper_log` (
   `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
   `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`oper_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
+) ENGINE=InnoDB AUTO_INCREMENT=316 DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -1624,6 +1672,30 @@ INSERT INTO `sys_oper_log` VALUES ('288', '部门管理', '3', 'com.ruoyi.web.co
 INSERT INTO `sys_oper_log` VALUES ('289', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"2012\" ],\r\n  \"parentId\" : [ \"0\" ],\r\n  \"menuType\" : [ \"M\" ],\r\n  \"menuName\" : [ \"商户管理\" ],\r\n  \"url\" : [ \"#\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"\" ],\r\n  \"orderNum\" : [ \"5\" ],\r\n  \"icon\" : [ \"fa fa-address-book\" ],\r\n  \"visible\" : [ \"0\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-29 23:13:55');
 INSERT INTO `sys_oper_log` VALUES ('290', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"2012\" ],\r\n  \"parentId\" : [ \"0\" ],\r\n  \"menuType\" : [ \"M\" ],\r\n  \"menuName\" : [ \"代理管理\" ],\r\n  \"url\" : [ \"#\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"\" ],\r\n  \"orderNum\" : [ \"5\" ],\r\n  \"icon\" : [ \"fa fa-address-book\" ],\r\n  \"visible\" : [ \"0\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-29 23:50:16');
 INSERT INTO `sys_oper_log` VALUES ('291', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4\" ],\r\n  \"parentId\" : [ \"0\" ],\r\n  \"menuType\" : [ \"M\" ],\r\n  \"menuName\" : [ \"商户管理\" ],\r\n  \"url\" : [ \"#\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"\" ],\r\n  \"orderNum\" : [ \"4\" ],\r\n  \"icon\" : [ \"fa fa-gear\" ],\r\n  \"visible\" : [ \"0\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-29 23:50:24');
+INSERT INTO `sys_oper_log` VALUES ('292', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4218\" ],\r\n  \"parentId\" : [ \"4211\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"银行收据\" ],\r\n  \"url\" : [ \"/zy/receiptBank\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:receiptBank:view\" ],\r\n  \"orderNum\" : [ \"1\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"1\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:11:21');
+INSERT INTO `sys_oper_log` VALUES ('293', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4205\" ],\r\n  \"parentId\" : [ \"4211\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"用户提款记录\" ],\r\n  \"url\" : [ \"/zy/userWithdrawal\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:userWithdrawal:view\" ],\r\n  \"orderNum\" : [ \"3\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"1\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:12:26');
+INSERT INTO `sys_oper_log` VALUES ('294', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4000\" ],\r\n  \"parentId\" : [ \"4\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"账户管理\" ],\r\n  \"url\" : [ \"/zy/bank\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:bank:view\" ],\r\n  \"orderNum\" : [ \"1\" ],\r\n  \"icon\" : [ \"fa fa-gear\" ],\r\n  \"visible\" : [ \"1\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:12:32');
+INSERT INTO `sys_oper_log` VALUES ('295', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4100\" ],\r\n  \"parentId\" : [ \"4\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"用户管理\" ],\r\n  \"url\" : [ \"/zy/user\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:user:view\" ],\r\n  \"orderNum\" : [ \"2\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"1\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:12:45');
+INSERT INTO `sys_oper_log` VALUES ('296', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"2049\" ],\r\n  \"parentId\" : [ \"4\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"提款记录\" ],\r\n  \"url\" : [ \"/zy/merchantWithdrawal\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:merchantWithdrawal:view\" ],\r\n  \"orderNum\" : [ \"3\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"0\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:13:44');
+INSERT INTO `sys_oper_log` VALUES ('297', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"2049\" ],\r\n  \"parentId\" : [ \"4\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"提款记录\" ],\r\n  \"url\" : [ \"/zy/merchantWithdrawal\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:merchantWithdrawal:view\" ],\r\n  \"orderNum\" : [ \"4\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"0\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:18:20');
+INSERT INTO `sys_oper_log` VALUES ('298', '菜单管理', '2', 'com.ruoyi.web.controller.system.SysMenuController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/menu/edit', '127.0.0.1', '内网IP', '{\r\n  \"menuId\" : [ \"4224\" ],\r\n  \"parentId\" : [ \"2012\" ],\r\n  \"menuType\" : [ \"C\" ],\r\n  \"menuName\" : [ \"账户管理\" ],\r\n  \"url\" : [ \"/zy/merchantBank\" ],\r\n  \"target\" : [ \"menuItem\" ],\r\n  \"perms\" : [ \"zy:merchantBank:view\" ],\r\n  \"orderNum\" : [ \"1\" ],\r\n  \"icon\" : [ \"#\" ],\r\n  \"visible\" : [ \"1\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-01-30 22:23:38');
+INSERT INTO `sys_oper_log` VALUES ('299', '提款记录', '1', 'com.ruoyi.web.controller.zy.MerchantWithdrawalController.addSave()', 'POST', '1', 'admin', '研发部门', '/zy/merchantWithdrawal/add', '127.0.0.1', '内网IP', '{\r\n  \"merchantNo\" : [ \"venn\" ],\r\n  \"merchantBankId\" : [ \"1123\" ],\r\n  \"amount\" : [ \"10000\" ],\r\n  \"fee\" : [ \"100\" ],\r\n  \"status\" : [ \"\" ],\r\n  \"paymentUrl\" : [ \"111\" ],\r\n  \"paymentTime\" : [ \"2020-01-30\" ],\r\n  \"createUser\" : [ \"123123\" ]\r\n}', 'null', '1', '\r\n### Error updating database.  Cause: java.sql.SQLException: Field \'status\' doesn\'t have a default value\r\n### The error may involve com.ruoyi.zy.mapper.MerchantWithdrawalMapper.insertMerchantWithdrawal-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into b_merchant_withdrawal          ( merchant_no,             merchant_bank_id,             amount,             fee,                          payment_url,             payment_time,             create_time,             create_user )           values ( ?,             ?,             ?,             ?,                          ?,             ?,             ?,             ? )\r\n### Cause: java.sql.SQLException: Field \'status\' doesn\'t have a default value\n; Field \'status\' doesn\'t have a default value; nested exception is java.sql.SQLException: Field \'status\' doesn\'t have a default value', '2020-01-30 22:30:35');
+INSERT INTO `sys_oper_log` VALUES ('300', '收款码管理', '1', 'com.ruoyi.web.controller.zy.UserQrCodeoneController.addSave()', 'POST', '1', 'admin', '研发部门', '/zy/usercodeone/add', '127.0.0.1', '内网IP', '{\r\n  \"username\" : [ \"xeon\" ],\r\n  \"receiptType\" : [ \"1001\" ]\r\n}', '{\r\n  \"msg\" : \"\\r\\n### Error updating database.  Cause: java.sql.SQLException: Field \'status\' doesn\'t have a default value\\r\\n### The error may involve com.ruoyi.zy.mapper.BUserReceiptMapper.insertBUserReceipt-Inline\\r\\n### The error occurred while setting parameters\\r\\n### SQL: insert into b_user_receipt          ( username,             wechat_receipt_times,             alipay_receipt_times,             update_time )           values ( ?,             ?,             ?,             ? )\\r\\n### Cause: java.sql.SQLException: Field \'status\' doesn\'t have a default value\\n; Field \'status\' doesn\'t have a default value; nested exception is java.sql.SQLException: Field \'status\' doesn\'t have a default value\",\r\n  \"code\" : 500\r\n}', '0', null, '2020-01-30 22:33:58');
+INSERT INTO `sys_oper_log` VALUES ('301', '代码生成', '3', 'com.ruoyi.generator.controller.GenController.remove()', 'POST', '1', 'admin', '研发部门', '/tool/gen/remove', '127.0.0.1', '内网IP', '{\r\n  \"ids\" : [ \"14\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 16:59:40');
+INSERT INTO `sys_oper_log` VALUES ('302', '代码生成', '6', 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', '1', 'admin', '研发部门', '/tool/gen/importTable', '127.0.0.1', '内网IP', '{\r\n  \"tables\" : [ \"b_user_order\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 16:59:47');
+INSERT INTO `sys_oper_log` VALUES ('303', '代码生成', '2', 'com.ruoyi.generator.controller.GenController.editSave()', 'POST', '1', 'admin', '研发部门', '/tool/gen/edit', '127.0.0.1', '内网IP', '{\r\n  \"tableId\" : [ \"23\" ],\r\n  \"tableName\" : [ \"b_user_order\" ],\r\n  \"tableComment\" : [ \"用户订单记录\" ],\r\n  \"className\" : [ \"BUserOrder\" ],\r\n  \"functionAuthor\" : [ \"ruoyi\" ],\r\n  \"remark\" : [ \"\" ],\r\n  \"columns[0].columnId\" : [ \"246\" ],\r\n  \"columns[0].sort\" : [ \"1\" ],\r\n  \"columns[0].columnComment\" : [ \"编号\" ],\r\n  \"columns[0].javaType\" : [ \"Long\" ],\r\n  \"columns[0].javaField\" : [ \"id\" ],\r\n  \"columns[0].isInsert\" : [ \"1\" ],\r\n  \"columns[0].queryType\" : [ \"EQ\" ],\r\n  \"columns[0].htmlType\" : [ \"input\" ],\r\n  \"columns[0].dictType\" : [ \"\" ],\r\n  \"columns[1].columnId\" : [ \"247\" ],\r\n  \"columns[1].sort\" : [ \"2\" ],\r\n  \"columns[1].columnComment\" : [ \"用户名\" ],\r\n  \"columns[1].javaType\" : [ \"String\" ],\r\n  \"columns[1].javaField\" : [ \"username\" ],\r\n  \"columns[1].isInsert\" : [ \"1\" ],\r\n  \"columns[1].isList\" : [ \"1\" ],\r\n  \"columns[1].isQuery\" : [ \"1\" ],\r\n  \"columns[1].queryType\" : [ \"EQ\" ],\r\n  \"columns[1].htmlType\" : [ \"input\" ],\r\n  \"columns[1].dictType\" : [ \"\" ],\r\n  \"columns[2].columnId\" : [ \"248\" ],\r\n  \"columns[2].sort\" : [ \"3\" ],\r\n  \"columns[2].columnComment\" : [ \"所属代理\" ],\r\n  \"columns[2].javaType\" : [ \"String\" ],\r\n  \"columns[2].javaField\" : [ \"agent\" ],\r\n  \"columns[2].isInsert\" : [ \"1\" ],\r\n  \"columns[2].isList\" : [ \"1\" ],\r\n  \"columns[2].isQuery\" : [ \"1\" ],\r\n  \"columns[2].queryType\" : [ \"EQ\" ],\r\n  \"columns[2].htmlType\" : [ \"input\" ],\r\n  \"columns[2].dictType\" : [ \"\" ],\r\n  \"columns[3].columnId\" : [ \"249\" ],\r\n  \"columns[3].sort\" : [ \"4\" ],\r\n  \"columns[3].columnComment\" : [ \"商户号\" ],\r\n  \"columns[3].javaType\" : [ \"String\" ],\r\n  \"columns[3].javaField\" : [ \"merchantNo\" ],\r\n  \"columns[3].isInsert\" : [ \"1\" ],\r\n  \"columns[3].isList\" : [ \"1\" ],\r\n  \"columns[3].isQuery\" : [ \"1\" ],\r\n  \"columns[3].queryType\" : [ \"EQ\" ],\r\n  \"columns[3].htmlType\" : [ \"input\" ],\r\n  \"columns[3].dictType\" : [ \"\" ],\r\n  \"columns[4].columnId\" : [ \"250\" ],\r\n  \"columns[4].sort\" : [ \"5\" ],\r\n  \"columns[4].columnComment\" : [ \"系统订单号\" ],\r\n  \"columns[4].javaType\" : [ \"String\" ],\r\n  \"columns[4].javaField\" : [ \"sysOrderNo\" ],\r\n  \"columns[4].isInser', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 17:34:06');
+INSERT INTO `sys_oper_log` VALUES ('304', '代码生成', '2', 'com.ruoyi.generator.controller.GenController.editSave()', 'POST', '1', 'admin', '研发部门', '/tool/gen/edit', '127.0.0.1', '内网IP', '{\r\n  \"tableId\" : [ \"23\" ],\r\n  \"tableName\" : [ \"b_user_order\" ],\r\n  \"tableComment\" : [ \"用户订单记录\" ],\r\n  \"className\" : [ \"BUserOrder\" ],\r\n  \"functionAuthor\" : [ \"zy\" ],\r\n  \"remark\" : [ \"\" ],\r\n  \"columns[0].columnId\" : [ \"246\" ],\r\n  \"columns[0].sort\" : [ \"1\" ],\r\n  \"columns[0].columnComment\" : [ \"编号\" ],\r\n  \"columns[0].javaType\" : [ \"Long\" ],\r\n  \"columns[0].javaField\" : [ \"id\" ],\r\n  \"columns[0].isInsert\" : [ \"1\" ],\r\n  \"columns[0].queryType\" : [ \"EQ\" ],\r\n  \"columns[0].htmlType\" : [ \"input\" ],\r\n  \"columns[0].dictType\" : [ \"\" ],\r\n  \"columns[1].columnId\" : [ \"247\" ],\r\n  \"columns[1].sort\" : [ \"2\" ],\r\n  \"columns[1].columnComment\" : [ \"用户名\" ],\r\n  \"columns[1].javaType\" : [ \"String\" ],\r\n  \"columns[1].javaField\" : [ \"username\" ],\r\n  \"columns[1].isInsert\" : [ \"1\" ],\r\n  \"columns[1].isList\" : [ \"1\" ],\r\n  \"columns[1].isQuery\" : [ \"1\" ],\r\n  \"columns[1].queryType\" : [ \"EQ\" ],\r\n  \"columns[1].htmlType\" : [ \"input\" ],\r\n  \"columns[1].dictType\" : [ \"\" ],\r\n  \"columns[2].columnId\" : [ \"248\" ],\r\n  \"columns[2].sort\" : [ \"3\" ],\r\n  \"columns[2].columnComment\" : [ \"所属代理\" ],\r\n  \"columns[2].javaType\" : [ \"String\" ],\r\n  \"columns[2].javaField\" : [ \"agent\" ],\r\n  \"columns[2].isInsert\" : [ \"1\" ],\r\n  \"columns[2].isList\" : [ \"1\" ],\r\n  \"columns[2].isQuery\" : [ \"1\" ],\r\n  \"columns[2].queryType\" : [ \"EQ\" ],\r\n  \"columns[2].htmlType\" : [ \"input\" ],\r\n  \"columns[2].dictType\" : [ \"\" ],\r\n  \"columns[3].columnId\" : [ \"249\" ],\r\n  \"columns[3].sort\" : [ \"4\" ],\r\n  \"columns[3].columnComment\" : [ \"商户号\" ],\r\n  \"columns[3].javaType\" : [ \"String\" ],\r\n  \"columns[3].javaField\" : [ \"merchantNo\" ],\r\n  \"columns[3].isInsert\" : [ \"1\" ],\r\n  \"columns[3].isList\" : [ \"1\" ],\r\n  \"columns[3].isQuery\" : [ \"1\" ],\r\n  \"columns[3].queryType\" : [ \"EQ\" ],\r\n  \"columns[3].htmlType\" : [ \"input\" ],\r\n  \"columns[3].dictType\" : [ \"\" ],\r\n  \"columns[4].columnId\" : [ \"250\" ],\r\n  \"columns[4].sort\" : [ \"5\" ],\r\n  \"columns[4].columnComment\" : [ \"系统订单号\" ],\r\n  \"columns[4].javaType\" : [ \"String\" ],\r\n  \"columns[4].javaField\" : [ \"sysOrderNo\" ],\r\n  \"columns[4].isInsert\" ', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 17:34:57');
+INSERT INTO `sys_oper_log` VALUES ('305', '代码生成', '8', 'com.ruoyi.generator.controller.GenController.genCode()', 'GET', '1', 'admin', '研发部门', '/tool/gen/genCode/b_user_order', '127.0.0.1', '内网IP', '{ }', 'null', '0', null, '2020-02-02 17:38:09');
+INSERT INTO `sys_oper_log` VALUES ('306', '字典类型', '1', 'com.ruoyi.web.controller.system.SysDictTypeController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/add', '127.0.0.1', '内网IP', '{\r\n  \"dictName\" : [ \"订单状态\" ],\r\n  \"dictType\" : [ \"sys_order_status\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:07:09');
+INSERT INTO `sys_oper_log` VALUES ('307', '字典类型', '2', 'com.ruoyi.web.controller.system.SysDictTypeController.editSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/edit', '127.0.0.1', '内网IP', '{\r\n  \"dictId\" : [ \"13\" ],\r\n  \"dictName\" : [ \"订单状态\" ],\r\n  \"dictType\" : [ \"sys_order_status\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"0未支付 1已支付\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:07:53');
+INSERT INTO `sys_oper_log` VALUES ('308', '字典类型', '1', 'com.ruoyi.web.controller.system.SysDictTypeController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/add', '127.0.0.1', '内网IP', '{\r\n  \"dictName\" : [ \"回调状态\" ],\r\n  \"dictType\" : [ \"sys_notify_status\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"0未回调 1回调失败 2回调成功\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:08:42');
+INSERT INTO `sys_oper_log` VALUES ('309', '字典数据', '1', 'com.ruoyi.web.controller.system.SysDictDataController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/data/add', '127.0.0.1', '内网IP', '{\r\n  \"dictLabel\" : [ \"0\" ],\r\n  \"dictValue\" : [ \"未支付\" ],\r\n  \"dictType\" : [ \"sys_order_status\" ],\r\n  \"cssClass\" : [ \"\" ],\r\n  \"dictSort\" : [ \"1\" ],\r\n  \"listClass\" : [ \"\" ],\r\n  \"isDefault\" : [ \"Y\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:22:40');
+INSERT INTO `sys_oper_log` VALUES ('310', '字典数据', '1', 'com.ruoyi.web.controller.system.SysDictDataController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/data/add', '127.0.0.1', '内网IP', '{\r\n  \"dictLabel\" : [ \"1\" ],\r\n  \"dictValue\" : [ \"已支付\" ],\r\n  \"dictType\" : [ \"sys_order_status\" ],\r\n  \"cssClass\" : [ \"\" ],\r\n  \"dictSort\" : [ \"2\" ],\r\n  \"listClass\" : [ \"\" ],\r\n  \"isDefault\" : [ \"Y\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:22:49');
+INSERT INTO `sys_oper_log` VALUES ('311', '字典数据', '1', 'com.ruoyi.web.controller.system.SysDictDataController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/data/add', '127.0.0.1', '内网IP', '{\r\n  \"dictLabel\" : [ \"0\" ],\r\n  \"dictValue\" : [ \"未回调\" ],\r\n  \"dictType\" : [ \"sys_notify_status\" ],\r\n  \"cssClass\" : [ \"\" ],\r\n  \"dictSort\" : [ \"1\" ],\r\n  \"listClass\" : [ \"\" ],\r\n  \"isDefault\" : [ \"Y\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:23:18');
+INSERT INTO `sys_oper_log` VALUES ('312', '字典数据', '1', 'com.ruoyi.web.controller.system.SysDictDataController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/data/add', '127.0.0.1', '内网IP', '{\r\n  \"dictLabel\" : [ \"1\" ],\r\n  \"dictValue\" : [ \"回调失败\" ],\r\n  \"dictType\" : [ \"sys_notify_status\" ],\r\n  \"cssClass\" : [ \"\" ],\r\n  \"dictSort\" : [ \"2\" ],\r\n  \"listClass\" : [ \"\" ],\r\n  \"isDefault\" : [ \"Y\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:23:35');
+INSERT INTO `sys_oper_log` VALUES ('313', '字典数据', '1', 'com.ruoyi.web.controller.system.SysDictDataController.addSave()', 'POST', '1', 'admin', '研发部门', '/system/dict/data/add', '127.0.0.1', '内网IP', '{\r\n  \"dictLabel\" : [ \"2\" ],\r\n  \"dictValue\" : [ \"回调成功\" ],\r\n  \"dictType\" : [ \"sys_notify_status\" ],\r\n  \"cssClass\" : [ \"\" ],\r\n  \"dictSort\" : [ \"3\" ],\r\n  \"listClass\" : [ \"\" ],\r\n  \"isDefault\" : [ \"Y\" ],\r\n  \"status\" : [ \"0\" ],\r\n  \"remark\" : [ \"\" ]\r\n}', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:23:50');
+INSERT INTO `sys_oper_log` VALUES ('314', '代码生成', '2', 'com.ruoyi.generator.controller.GenController.editSave()', 'POST', '1', 'admin', '研发部门', '/tool/gen/edit', '127.0.0.1', '内网IP', '{\r\n  \"tableId\" : [ \"23\" ],\r\n  \"tableName\" : [ \"b_user_order\" ],\r\n  \"tableComment\" : [ \"用户订单记录\" ],\r\n  \"className\" : [ \"BUserOrder\" ],\r\n  \"functionAuthor\" : [ \"zy\" ],\r\n  \"remark\" : [ \"\" ],\r\n  \"columns[0].columnId\" : [ \"246\" ],\r\n  \"columns[0].sort\" : [ \"1\" ],\r\n  \"columns[0].columnComment\" : [ \"编号\" ],\r\n  \"columns[0].javaType\" : [ \"Long\" ],\r\n  \"columns[0].javaField\" : [ \"id\" ],\r\n  \"columns[0].isInsert\" : [ \"1\" ],\r\n  \"columns[0].queryType\" : [ \"EQ\" ],\r\n  \"columns[0].htmlType\" : [ \"input\" ],\r\n  \"columns[0].dictType\" : [ \"\" ],\r\n  \"columns[1].columnId\" : [ \"247\" ],\r\n  \"columns[1].sort\" : [ \"2\" ],\r\n  \"columns[1].columnComment\" : [ \"用户名\" ],\r\n  \"columns[1].javaType\" : [ \"String\" ],\r\n  \"columns[1].javaField\" : [ \"username\" ],\r\n  \"columns[1].isInsert\" : [ \"1\" ],\r\n  \"columns[1].isList\" : [ \"1\" ],\r\n  \"columns[1].isQuery\" : [ \"1\" ],\r\n  \"columns[1].queryType\" : [ \"EQ\" ],\r\n  \"columns[1].htmlType\" : [ \"input\" ],\r\n  \"columns[1].dictType\" : [ \"\" ],\r\n  \"columns[2].columnId\" : [ \"248\" ],\r\n  \"columns[2].sort\" : [ \"3\" ],\r\n  \"columns[2].columnComment\" : [ \"所属代理\" ],\r\n  \"columns[2].javaType\" : [ \"String\" ],\r\n  \"columns[2].javaField\" : [ \"agent\" ],\r\n  \"columns[2].isInsert\" : [ \"1\" ],\r\n  \"columns[2].isList\" : [ \"1\" ],\r\n  \"columns[2].isQuery\" : [ \"1\" ],\r\n  \"columns[2].queryType\" : [ \"EQ\" ],\r\n  \"columns[2].htmlType\" : [ \"input\" ],\r\n  \"columns[2].dictType\" : [ \"\" ],\r\n  \"columns[3].columnId\" : [ \"249\" ],\r\n  \"columns[3].sort\" : [ \"4\" ],\r\n  \"columns[3].columnComment\" : [ \"商户号\" ],\r\n  \"columns[3].javaType\" : [ \"String\" ],\r\n  \"columns[3].javaField\" : [ \"merchantNo\" ],\r\n  \"columns[3].isInsert\" : [ \"1\" ],\r\n  \"columns[3].isList\" : [ \"1\" ],\r\n  \"columns[3].isQuery\" : [ \"1\" ],\r\n  \"columns[3].queryType\" : [ \"EQ\" ],\r\n  \"columns[3].htmlType\" : [ \"input\" ],\r\n  \"columns[3].dictType\" : [ \"\" ],\r\n  \"columns[4].columnId\" : [ \"250\" ],\r\n  \"columns[4].sort\" : [ \"5\" ],\r\n  \"columns[4].columnComment\" : [ \"系统订单号\" ],\r\n  \"columns[4].javaType\" : [ \"String\" ],\r\n  \"columns[4].javaField\" : [ \"sysOrderNo\" ],\r\n  \"columns[4].isInsert\" ', '{\r\n  \"msg\" : \"操作成功\",\r\n  \"code\" : 0\r\n}', '0', null, '2020-02-02 18:24:54');
+INSERT INTO `sys_oper_log` VALUES ('315', '代码生成', '8', 'com.ruoyi.generator.controller.GenController.genCode()', 'GET', '1', 'admin', '研发部门', '/tool/gen/genCode/b_user_order', '127.0.0.1', '内网IP', '{ }', 'null', '0', null, '2020-02-02 18:24:58');
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -1822,7 +1894,7 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES ('1', '103', 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '/profile/avatar/2020/01/20/6e0c0235d8071c6cea445bab8cbd4c04.png', '29c67a30398638269fe600f73a054934', '111111', '0', '0', '127.0.0.1', '2020-01-20 22:34:04', 'admin', '2018-03-16 11:33:00', 'ry', '2020-01-20 22:35:14', '管理员');
+INSERT INTO `sys_user` VALUES ('1', '103', 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '/profile/avatar/2020/01/20/6e0c0235d8071c6cea445bab8cbd4c04.png', '29c67a30398638269fe600f73a054934', '111111', '0', '0', '127.0.0.1', '2020-02-02 17:52:18', 'admin', '2018-03-16 11:33:00', 'ry', '2020-02-02 17:52:17', '管理员');
 INSERT INTO `sys_user` VALUES ('2', '105', 'ry', '若依', '00', 'ry@qq.com', '15666666666', '0', '', '8e6d98b90472783cc73c17047ddccf36', '222222', '0', '0', '127.0.0.1', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', 'admin', '2019-11-19 10:34:47', '测试员');
 
 -- ----------------------------
@@ -1847,7 +1919,6 @@ CREATE TABLE `sys_user_online` (
 -- ----------------------------
 -- Records of sys_user_online
 -- ----------------------------
-INSERT INTO `sys_user_online` VALUES ('68e98a48-1c92-4048-b972-c059185d721e', 'admin', '研发部门', '127.0.0.1', '内网IP', 'Chrome', 'Windows 10', 'on_line', '2020-01-29 22:50:07', '2020-01-29 23:52:15', '1800000');
 
 -- ----------------------------
 -- Table structure for sys_user_post
