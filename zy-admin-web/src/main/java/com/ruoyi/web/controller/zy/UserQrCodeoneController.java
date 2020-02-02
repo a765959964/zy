@@ -11,8 +11,8 @@ import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.web.util.QRCodeUtil;
-import com.ruoyi.zy.domain.BUserReceipt;
 import com.ruoyi.zy.domain.BUserQrCodeone;
+import com.ruoyi.zy.domain.BUserReceipt;
 import com.ruoyi.zy.service.IBUserQrCodeoneService;
 import com.ruoyi.zy.service.IBUserReceiptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -22,6 +22,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -61,6 +62,43 @@ public class UserQrCodeoneController extends BaseController
         List<BUserQrCodeone> list = userQrCodeoneService.selectBUserQrCodeoneList(userQrCodeone);
         return getDataTable(list);
     }
+
+    /**
+     * 状态修改
+     */
+    @Log(title = "修改状态", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("zy:usercodeone:edit")
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(BUserQrCodeone userQrCodeone)
+    {
+
+        return toAjax(userQrCodeoneService.changeStatus(userQrCodeone));
+    }
+
+
+    /**
+     * 批量状态修改
+     */
+    @Log(title = "批量状态修改", businessType = BusinessType.UPDATE)
+//    @RequiresPermissions("zy:usercodeone:batchedit")
+    @PostMapping("/changeBatchStatus")
+    @ResponseBody
+    public AjaxResult changeBatchStatus(HttpServletRequest req,BUserQrCodeone userQrCodeone)
+    {
+           String id =  req.getParameter("ids");
+           String status = req.getParameter("status");
+           int num = 0;
+           String [] ids = id.split(",");
+           for(int i=0;i<ids.length; i++ ){
+               userQrCodeone.setId(Long.parseLong(ids[i]));
+               userQrCodeone.setStatus(status);
+               num = userQrCodeoneService.changeStatus(userQrCodeone);
+           }
+        return toAjax(num);
+    }
+
+
 
     /**
      * 导出收款码管理列表
