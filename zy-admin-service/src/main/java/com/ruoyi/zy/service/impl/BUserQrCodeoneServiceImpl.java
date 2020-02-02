@@ -1,15 +1,15 @@
 package com.ruoyi.zy.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.zy.domain.BUserQrCodeone;
+import com.ruoyi.zy.mapper.BUserQrCodeoneMapper;
+import com.ruoyi.zy.service.IBUserQrCodeoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.zy.mapper.BUserQrCodeoneMapper;
-import com.ruoyi.zy.domain.BUserQrCodeone;
-import com.ruoyi.zy.service.IBUserQrCodeoneService;
-import com.ruoyi.common.core.text.Convert;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 收款码管理Service业务层处理
@@ -99,5 +99,10 @@ public class BUserQrCodeoneServiceImpl implements IBUserQrCodeoneService
     public int deleteBUserQrCodeoneById(Long id)
     {
         return bUserQrCodeoneMapper.deleteBUserQrCodeoneById(id);
+    }
+
+    @Override
+    public int changeStatus(BUserQrCodeone userQrCodeone) {
+        return bUserQrCodeoneMapper.updateBUserQrCodeone(userQrCodeone);
     }
 }

@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.Date;
+
 /**
  * 收款码管理对象 b_user_qr_codeone
  * 
@@ -37,6 +39,14 @@ public class BUserQrCodeone extends BaseEntity
     /** 当前登录的用户名 */
     @Excel(name = "当前登录的用户名")
     private String agent;
+
+    /** 状态 */
+    @Excel(name = "状态")
+    private String status;
+
+    /** 创建时间 */
+    @Excel(name = "创建时间")
+    private Date createTime;
 
     public void setId(Long id) 
     {
@@ -93,6 +103,24 @@ public class BUserQrCodeone extends BaseEntity
         return agent;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -103,6 +131,8 @@ public class BUserQrCodeone extends BaseEntity
             .append("receiptQrcodeCode", getReceiptQrcodeCode())
             .append("agent", getAgent())
             .append("createTime", getCreateTime())
+            .append("status", getStatus())
+
             .toString();
     }
 }

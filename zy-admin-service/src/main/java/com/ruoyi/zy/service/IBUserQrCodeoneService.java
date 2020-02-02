@@ -62,4 +62,12 @@ public interface IBUserQrCodeoneService
      * @return 结果
      */
     public int deleteBUserQrCodeoneById(Long id);
+
+
+    /**
+     *  收款码状态休息
+     *
+     * @return 结果
+     */
+    public int changeStatus(BUserQrCodeone  userQrCodeone);
 }
