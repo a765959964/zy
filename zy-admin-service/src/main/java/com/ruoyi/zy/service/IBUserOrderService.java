@@ -4,47 +4,47 @@ import com.ruoyi.zy.domain.BUserOrder;
 import java.util.List;
 
 /**
- * 交易记录Service接口
+ * 用户订单记录Service接口
  * 
- * @author ruoyi
- * @date 2019-11-21
+ * @author zy
+ * @date 2020-02-02
  */
 public interface IBUserOrderService 
 {
     /**
-     * 查询交易记录
+     * 查询用户订单记录
      * 
-     * @param id 交易记录ID
-     * @return 交易记录
+     * @param id 用户订单记录ID
+     * @return 用户订单记录
      */
     public BUserOrder selectBUserOrderById(Long id);
 
     /**
-     * 查询交易记录列表
+     * 查询用户订单记录列表
      * 
-     * @param bUserOrder 交易记录
-     * @return 交易记录集合
+     * @param bUserOrder 用户订单记录
+     * @return 用户订单记录集合
      */
     public List<BUserOrder> selectBUserOrderList(BUserOrder bUserOrder);
 
     /**
-     * 新增交易记录
+     * 新增用户订单记录
      * 
-     * @param bUserOrder 交易记录
+     * @param bUserOrder 用户订单记录
      * @return 结果
      */
     public int insertBUserOrder(BUserOrder bUserOrder);
 
     /**
-     * 修改交易记录
+     * 修改用户订单记录
      * 
-     * @param bUserOrder 交易记录
+     * @param bUserOrder 用户订单记录
      * @return 结果
      */
     public int updateBUserOrder(BUserOrder bUserOrder);
 
     /**
-     * 批量删除交易记录
+     * 批量删除用户订单记录
      * 
      * @param ids 需要删除的数据ID
      * @return 结果
@@ -52,9 +52,9 @@ public interface IBUserOrderService
     public int deleteBUserOrderByIds(String ids);
 
     /**
-     * 删除交易记录信息
+     * 删除用户订单记录信息
      * 
-     * @param id 交易记录ID
+     * @param id 用户订单记录ID
      * @return 结果
      */
     public int deleteBUserOrderById(Long id);

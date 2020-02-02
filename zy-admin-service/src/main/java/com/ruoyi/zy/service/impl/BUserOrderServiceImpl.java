@@ -10,10 +10,10 @@ import com.ruoyi.zy.service.IBUserOrderService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
- * 交易记录Service业务层处理
+ * 用户订单记录Service业务层处理
  * 
- * @author ruoyi
- * @date 2019-11-21
+ * @author zy
+ * @date 2020-02-02
  */
 @Service
 public class BUserOrderServiceImpl implements IBUserOrderService 
@@ -22,10 +22,10 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     private BUserOrderMapper bUserOrderMapper;
 
     /**
-     * 查询交易记录
+     * 查询用户订单记录
      * 
-     * @param id 交易记录ID
-     * @return 交易记录
+     * @param id 用户订单记录ID
+     * @return 用户订单记录
      */
     @Override
     public BUserOrder selectBUserOrderById(Long id)
@@ -34,10 +34,10 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     /**
-     * 查询交易记录列表
+     * 查询用户订单记录列表
      * 
-     * @param bUserOrder 交易记录
-     * @return 交易记录
+     * @param bUserOrder 用户订单记录
+     * @return 用户订单记录
      */
     @Override
     public List<BUserOrder> selectBUserOrderList(BUserOrder bUserOrder)
@@ -46,9 +46,9 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     /**
-     * 新增交易记录
+     * 新增用户订单记录
      * 
-     * @param bUserOrder 交易记录
+     * @param bUserOrder 用户订单记录
      * @return 结果
      */
     @Override
@@ -59,9 +59,9 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     /**
-     * 修改交易记录
+     * 修改用户订单记录
      * 
-     * @param bUserOrder 交易记录
+     * @param bUserOrder 用户订单记录
      * @return 结果
      */
     @Override
@@ -71,7 +71,7 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     /**
-     * 删除交易记录对象
+     * 删除用户订单记录对象
      * 
      * @param ids 需要删除的数据ID
      * @return 结果
@@ -83,9 +83,9 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     /**
-     * 删除交易记录信息
+     * 删除用户订单记录信息
      * 
-     * @param id 交易记录ID
+     * @param id 用户订单记录ID
      * @return 结果
      */
     @Override
