@@ -12,7 +12,7 @@ import java.util.Date;
  * @author zf
  * @date 2019-11-28
  */
-public class UserWithdrawal extends BaseEntity
+public class BUserWithdrawal extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

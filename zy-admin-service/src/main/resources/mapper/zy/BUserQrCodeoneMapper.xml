@@ -33,10 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="get" parameterType="java.util.Map" resultMap="BUserQrCodeoneResult">
-        select
         <include refid="selectBUserQrCodeoneVo"/>
-        from
-        B_USER_QR_CODEONE
         where 1 = 1
         <if test="username != null and username != ''">and username = #{username}</if>
         <if test="receiptType != null and receiptType != ''">and receipt_type = #{receiptType}</if>

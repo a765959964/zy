@@ -12,7 +12,7 @@ import java.util.Date;
  * @author zf
  * @date 2019-11-28
  */
-public class UserDeposit extends BaseEntity
+public class BUserDeposit extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -80,7 +80,7 @@ public class UserDeposit extends BaseEntity
 
     /** 补发金额 */
     @Excel(name = "补发金额")
-    private Long spreadAmount;
+    private Double spreadAmount;
 
     /** 收款银行编号 */
     @Excel(name = "收款银行编号")
@@ -221,12 +221,12 @@ public class UserDeposit extends BaseEntity
     {
         return status;
     }
-    public void setSpreadAmount(Long spreadAmount) 
+    public void setSpreadAmount(Double spreadAmount) 
     {
         this.spreadAmount = spreadAmount;
     }
 
-    public Long getSpreadAmount() 
+    public Double getSpreadAmount() 
     {
         return spreadAmount;
     }

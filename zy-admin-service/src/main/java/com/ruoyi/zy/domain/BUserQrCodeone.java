@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author zy
  * @date 2020-01-08
  */
-public class UserQrCodeone extends BaseEntity
+public class BUserQrCodeone extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

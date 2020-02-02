@@ -21,14 +21,18 @@ public class BUserReceipt extends BaseEntity
     /** 用户名 */
     @Excel(name = "用户名")
     private String username;
+    
+    /** 所属代理 */
+    @Excel(name = "所属代理")
+    private String agent;
 
     /** 微信收款次数 */
     @Excel(name = "微信收款次数")
-    private Long wechatReceiptTimes;
+    private int wechatReceiptTimes;
 
     /** 支付宝收款次数 */
     @Excel(name = "支付宝收款次数")
-    private Long alipayReceiptTimes;
+    private int alipayReceiptTimes;
 
     public void setId(Long id) 
     {
@@ -48,26 +52,34 @@ public class BUserReceipt extends BaseEntity
     {
         return username;
     }
-    public void setWechatReceiptTimes(Long wechatReceiptTimes) 
+    public void setWechatReceiptTimes(int wechatReceiptTimes) 
     {
         this.wechatReceiptTimes = wechatReceiptTimes;
     }
 
-    public Long getWechatReceiptTimes() 
+    public int getWechatReceiptTimes() 
     {
         return wechatReceiptTimes;
     }
-    public void setAlipayReceiptTimes(Long alipayReceiptTimes) 
+    public void setAlipayReceiptTimes(int alipayReceiptTimes) 
     {
         this.alipayReceiptTimes = alipayReceiptTimes;
     }
 
-    public Long getAlipayReceiptTimes() 
+    public int getAlipayReceiptTimes() 
     {
         return alipayReceiptTimes;
     }
+    
+    public String getAgent() {
+		return agent;
+	}
 
-    @Override
+	public void setAgent(String agent) {
+		this.agent = agent;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -75,6 +87,7 @@ public class BUserReceipt extends BaseEntity
             .append("wechatReceiptTimes", getWechatReceiptTimes())
             .append("alipayReceiptTimes", getAlipayReceiptTimes())
             .append("updateTime", getUpdateTime())
+            .append("agent", getAgent())
             .toString();
     }
 }
