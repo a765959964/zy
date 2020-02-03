@@ -7,7 +7,7 @@ import java.util.List;
  * 提款记录Service接口
  * 
  * @author zy
- * @date 2019-11-20
+ * @date 2020-02-04
  */
 public interface IMerchantWithdrawalService 
 {

@@ -7,31 +7,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="MerchantWithdrawal" id="MerchantWithdrawalResult">
         <result property="id"    column="id"    />
         <result property="merchantNo"    column="merchant_no"    />
-        <result property="merchantBankId"    column="merchant_bank_id"    />
         <result property="amount"    column="amount"    />
         <result property="fee"    column="fee"    />
+        <result property="accountName"    column="account_name"    />
+        <result property="accountNo"    column="account_no"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="accountAddress"    column="account_address"    />
         <result property="status"    column="status"    />
-        <result property="paymentUrl"    column="payment_url"    />
         <result property="paymentTime"    column="payment_time"    />
         <result property="createTime"    column="create_time"    />
         <result property="createUser"    column="create_user"    />
     </resultMap>
 
     <sql id="selectMerchantWithdrawalVo">
-        select id, merchant_no, merchant_bank_id, amount, fee, status, payment_url, payment_time, create_time, create_user from b_merchant_withdrawal
+        select id, merchant_no, amount, fee, account_name, account_no, bank_name, account_address, status, payment_time, create_time, create_user from b_merchant_withdrawal
     </sql>
 
     <select id="selectMerchantWithdrawalList" parameterType="MerchantWithdrawal" resultMap="MerchantWithdrawalResult">
         <include refid="selectMerchantWithdrawalVo"/>
         <where>  
             <if test="merchantNo != null  and merchantNo != ''"> and merchant_no = #{merchantNo}</if>
-            <if test="merchantBankId != null "> and merchant_bank_id = #{merchantBankId}</if>
-            <if test="amount != null "> and amount = #{amount}</if>
-            <if test="fee != null "> and fee = #{fee}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="paymentUrl != null  and paymentUrl != ''"> and payment_url = #{paymentUrl}</if>
-            <if test="paymentTime != null "> and payment_time = #{paymentTime}</if>
-            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
         </where>
     </select>
     
@@ -44,22 +40,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into b_merchant_withdrawal
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="merchantNo != null  and merchantNo != ''">merchant_no,</if>
-            <if test="merchantBankId != null ">merchant_bank_id,</if>
             <if test="amount != null ">amount,</if>
             <if test="fee != null ">fee,</if>
+            <if test="accountName != null  and accountName != ''">account_name,</if>
+            <if test="accountNo != null  and accountNo != ''">account_no,</if>
+            <if test="bankName != null  and bankName != ''">bank_name,</if>
+            <if test="accountAddress != null  and accountAddress != ''">account_address,</if>
             <if test="status != null  and status != ''">status,</if>
-            <if test="paymentUrl != null  and paymentUrl != ''">payment_url,</if>
             <if test="paymentTime != null ">payment_time,</if>
             <if test="createTime != null ">create_time,</if>
             <if test="createUser != null  and createUser != ''">create_user,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="merchantNo != null  and merchantNo != ''">#{merchantNo},</if>
-            <if test="merchantBankId != null ">#{merchantBankId},</if>
             <if test="amount != null ">#{amount},</if>
             <if test="fee != null ">#{fee},</if>
+            <if test="accountName != null  and accountName != ''">#{accountName},</if>
+            <if test="accountNo != null  and accountNo != ''">#{accountNo},</if>
+            <if test="bankName != null  and bankName != ''">#{bankName},</if>
+            <if test="accountAddress != null  and accountAddress != ''">#{accountAddress},</if>
             <if test="status != null  and status != ''">#{status},</if>
-            <if test="paymentUrl != null  and paymentUrl != ''">#{paymentUrl},</if>
             <if test="paymentTime != null ">#{paymentTime},</if>
             <if test="createTime != null ">#{createTime},</if>
             <if test="createUser != null  and createUser != ''">#{createUser},</if>
@@ -70,11 +70,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update b_merchant_withdrawal
         <trim prefix="SET" suffixOverrides=",">
             <if test="merchantNo != null  and merchantNo != ''">merchant_no = #{merchantNo},</if>
-            <if test="merchantBankId != null ">merchant_bank_id = #{merchantBankId},</if>
             <if test="amount != null ">amount = #{amount},</if>
             <if test="fee != null ">fee = #{fee},</if>
+            <if test="accountName != null  and accountName != ''">account_name = #{accountName},</if>
+            <if test="accountNo != null  and accountNo != ''">account_no = #{accountNo},</if>
+            <if test="bankName != null  and bankName != ''">bank_name = #{bankName},</if>
+            <if test="accountAddress != null  and accountAddress != ''">account_address = #{accountAddress},</if>
             <if test="status != null  and status != ''">status = #{status},</if>
-            <if test="paymentUrl != null  and paymentUrl != ''">payment_url = #{paymentUrl},</if>
             <if test="paymentTime != null ">payment_time = #{paymentTime},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>

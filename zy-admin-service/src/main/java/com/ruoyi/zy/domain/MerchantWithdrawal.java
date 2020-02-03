@@ -10,7 +10,7 @@ import java.util.Date;
  * 提款记录对象 b_merchant_withdrawal
  * 
  * @author zy
- * @date 2019-11-20
+ * @date 2020-02-04
  */
 public class MerchantWithdrawal extends BaseEntity
 {
@@ -23,10 +23,6 @@ public class MerchantWithdrawal extends BaseEntity
     @Excel(name = "商户号")
     private String merchantNo;
 
-    /** 商户收款银行编号 */
-    @Excel(name = "商户收款银行编号")
-    private Long merchantBankId;
-
     /** 提现金额 */
     @Excel(name = "提现金额")
     private Double amount;
@@ -35,20 +31,31 @@ public class MerchantWithdrawal extends BaseEntity
     @Excel(name = "手续费")
     private Double fee;
 
+    /** 收款人 */
+    @Excel(name = "收款人")
+    private String accountName;
+
+    /** 收款账号 */
+    @Excel(name = "收款账号")
+    private String accountNo;
+
+    /** 收款银行 */
+    @Excel(name = "收款银行")
+    private String bankName;
+
+    /** 收款支行地址 */
+    @Excel(name = "收款支行地址")
+    private String accountAddress;
+
     /** 状态 */
     @Excel(name = "状态")
     private String status;
-
-    /** 支付凭证 */
-    @Excel(name = "支付凭证")
-    private String paymentUrl;
 
     /** 支付时间 */
     @Excel(name = "支付时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date paymentTime;
 
     /** 创建人 */
-    @Excel(name = "创建人")
     private String createUser;
 
     public void setId(Long id) 
@@ -69,15 +76,6 @@ public class MerchantWithdrawal extends BaseEntity
     {
         return merchantNo;
     }
-    public void setMerchantBankId(Long merchantBankId) 
-    {
-        this.merchantBankId = merchantBankId;
-    }
-
-    public Long getMerchantBankId() 
-    {
-        return merchantBankId;
-    }
     public void setAmount(Double amount) 
     {
         this.amount = amount;
@@ -96,6 +94,42 @@ public class MerchantWithdrawal extends BaseEntity
     {
         return fee;
     }
+    public void setAccountName(String accountName) 
+    {
+        this.accountName = accountName;
+    }
+
+    public String getAccountName() 
+    {
+        return accountName;
+    }
+    public void setAccountNo(String accountNo) 
+    {
+        this.accountNo = accountNo;
+    }
+
+    public String getAccountNo() 
+    {
+        return accountNo;
+    }
+    public void setBankName(String bankName) 
+    {
+        this.bankName = bankName;
+    }
+
+    public String getBankName() 
+    {
+        return bankName;
+    }
+    public void setAccountAddress(String accountAddress) 
+    {
+        this.accountAddress = accountAddress;
+    }
+
+    public String getAccountAddress() 
+    {
+        return accountAddress;
+    }
     public void setStatus(String status) 
     {
         this.status = status;
@@ -104,15 +138,6 @@ public class MerchantWithdrawal extends BaseEntity
     public String getStatus() 
     {
         return status;
-    }
-    public void setPaymentUrl(String paymentUrl) 
-    {
-        this.paymentUrl = paymentUrl;
-    }
-
-    public String getPaymentUrl() 
-    {
-        return paymentUrl;
     }
     public void setPaymentTime(Date paymentTime) 
     {
@@ -138,11 +163,13 @@ public class MerchantWithdrawal extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("merchantNo", getMerchantNo())
-            .append("merchantBankId", getMerchantBankId())
             .append("amount", getAmount())
             .append("fee", getFee())
+            .append("accountName", getAccountName())
+            .append("accountNo", getAccountNo())
+            .append("bankName", getBankName())
+            .append("accountAddress", getAccountAddress())
             .append("status", getStatus())
-            .append("paymentUrl", getPaymentUrl())
             .append("paymentTime", getPaymentTime())
             .append("createTime", getCreateTime())
             .append("createUser", getCreateUser())

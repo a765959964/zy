@@ -13,7 +13,7 @@ import com.ruoyi.common.core.text.Convert;
  * 提款记录Service业务层处理
  * 
  * @author zy
- * @date 2019-11-20
+ * @date 2020-02-04
  */
 @Service
 public class MerchantWithdrawalServiceImpl implements IMerchantWithdrawalService 
