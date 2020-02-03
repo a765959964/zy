@@ -66,16 +66,16 @@ public class BMerchant extends BaseEntity
         this.merchantSecret = merchantSecret;
     }
 
-    public String getMerchantSecret() 
+    public String getMerchantSecret()
     {
         return merchantSecret;
     }
-    public void setCreateUser(String createUser) 
+    public void setCreateUser(String createUser)
     {
         this.createUser = createUser;
     }
 
-    public String getCreateUser() 
+    public String getCreateUser()
     {
         return createUser;
     }
