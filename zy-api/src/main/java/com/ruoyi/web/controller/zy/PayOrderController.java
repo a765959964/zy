@@ -6,31 +6,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.web.utils.DateUtil;
 import com.ruoyi.web.utils.GenerateOrderUtil;
 import com.ruoyi.web.utils.HttpUtil;
-import com.ruoyi.web.utils.MD5Util;
+import com.ruoyi.web.utils.MD5Utils;
 import com.ruoyi.web.zy.common.ErrorCode;
 import com.ruoyi.zy.domain.BMerchant;
 import com.ruoyi.zy.domain.BUserDeposit;
 import com.ruoyi.zy.domain.BUserOrder;
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import com.ruoyi.zy.domain.BUserReceipt;
-import com.ruoyi.zy.domain.MerchantOrder;
 import com.ruoyi.zy.domain.SSystemParameter;
-import com.ruoyi.zy.domain.BUserDeposit;
 import com.ruoyi.zy.service.IBMerchantService;
 import com.ruoyi.zy.service.IBUserDepositService;
 import com.ruoyi.zy.service.IBUserOrderService;
 import com.ruoyi.zy.service.IBUserQrCodeoneService;
 import com.ruoyi.zy.service.IBUserReceiptService;
-import com.ruoyi.zy.service.IMerchantOrderService;
 import com.ruoyi.zy.service.ISSystemParameterService;
 import java.text.DecimalFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
@@ -54,9 +51,6 @@ public class PayOrderController {
 	private IBMerchantService merchantService;
 
 	@Autowired
-	private IMerchantOrderService merchantOrderService;
-
-	@Autowired
 	private IBUserDepositService userDepositService;
 
 	@Autowired
@@ -71,19 +65,8 @@ public class PayOrderController {
 	@Autowired
 	private IBUserReceiptService userReceiptService;
 
-//	private static Map<String, String> pageMap = new HashMap<String, String>();
-
-//	static {
-//		pageMap.put("1001", "pay/wxsm");
-//		pageMap.put("1002", "pay/wxwap");
-//		pageMap.put("1003", "pay/zfbsm");
-//		pageMap.put("1004", "pay/zfbwap");
-//	}
-
     @RequestMapping(value = "/gateway", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String gateway(@RequestBody Map<String, String> map, HttpServletRequest request) throws Exception {
-		// ModelAndView model = new
-		// ModelAndView((String)pageMap.get(map.get("pay_type")));
 		synchronized (this) {
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			String ip = HttpUtil.getIp(request);
@@ -103,7 +86,6 @@ public class PayOrderController {
 				return message;
 			}
 			List<BUserDeposit> depositList = null;
-//			BUserDeposit userDeposit = null;
 
 			String columnName = "";
 			if ("1001".equals(receiptType))
@@ -171,11 +153,13 @@ public class PayOrderController {
 			if (saveResultMap.get("code").equals(ErrorCode.SC_10000.getCode())) {
 				resultMap.put("code", ErrorCode.SC_10000.getCode());
 				resultMap.put("message", ErrorCode.SC_10000.getMessage());
+				
 				Map<String, Object> returnMap = new HashMap<String, Object>();
 				returnMap.put("qrcode", uco.getReceiptQrcodeCode());
-				returnMap.put("amount", returnMap.get("amount"));
-				returnMap.put("sysOrderNo", returnMap.get("sysOrderNo"));
-				returnMap.put("remark", returnMap.get("remark"));
+				returnMap.put("amount", saveResultMap.get("amount"));
+				returnMap.put("merOrderNo", saveResultMap.get("merOrderNo"));
+				returnMap.put("remark", saveResultMap.get("remark"));
+				
 				resultMap.put("data", returnMap);
 				return mapper.writeValueAsString(resultMap);
 			} else {
@@ -184,32 +168,46 @@ public class PayOrderController {
 				return mapper.writeValueAsString(resultMap);
 			}
 
-			// StringUtils.isNotEmpty((CharSequence)resultMap.get("sysOrderNo"));
-
-			// model.addObject("orderAmount", order_amount);
-			// model.addObject("sysOrderNo", resultMap.get("sysOrderNo"));
-			// model.addObject("productName", map.get("product_name"));
-			// model.addObject("url", uco.getReceiptQrcodeCode());
-			// model.addObject("remark", resultMap.get("remark"));
-
 		}
 	}
 
 	private String verification(Map<String, String> valuesMap) throws JsonProcessingException {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			BMerchant merchant = this.merchantService.selectByMerchatNo((String) valuesMap.get("merchant_no"));
+			String payType = (String)valuesMap.get("pay_type");
+			String merchantNo = (String)valuesMap.get("merchant_no");
+			String amount = (String)valuesMap.get("amount");
+			String merOrderNo = (String)valuesMap.get("merOrderNo");
+			String notifyUrl = (String)valuesMap.get("notify_url");
+			String remark = (String)valuesMap.get("remark");
+			if(StringUtils.isBlank(payType)||StringUtils.isBlank(merchantNo)||StringUtils.isBlank(amount)||StringUtils.isBlank(merOrderNo)
+					||StringUtils.isBlank(notifyUrl)) {
+				//请求参数不能为空
+				resultMap.put("code", ErrorCode.SC_20007.getCode());
+				resultMap.put("message", ErrorCode.SC_20007.getMessage());
+				return mapper.writeValueAsString(resultMap); 
+			}
+			
+			BMerchant merchant = this.merchantService.selectByMerchatNo(merchantNo);
 			if (merchant == null) { 
 				// 商户不存在
 				resultMap.put("code", ErrorCode.SC_20000.getCode());
 				resultMap.put("message", ErrorCode.SC_20000.getMessage());
 				return mapper.writeValueAsString(resultMap); 
 			}
+			BUserOrder userOrder = new BUserOrder();
+			userOrder.setMerOrderNo(merOrderNo);
+			List<BUserOrder> listOrder = this.userOrderService.selectBUserOrderList(userOrder);
+			if(listOrder != null && listOrder.size() > 0) {
+				resultMap.put("code", ErrorCode.SC_20006.getCode());
+				resultMap.put("message", ErrorCode.SC_20006.getMessage());
+				return mapper.writeValueAsString(resultMap);
+			}
+			
 
-			String amounts = (String) valuesMap.get("amount");
 			String regEx1 = "\\d+";
 			Pattern p = Pattern.compile(regEx1);
-			Matcher m = p.matcher(amounts);
+			Matcher m = p.matcher(amount);
 			if (!m.matches()) {
 				// 下单金额错误
 				resultMap.put("code", ErrorCode.SC_20001.getCode());
@@ -217,19 +215,14 @@ public class PayOrderController {
 				return mapper.writeValueAsString(resultMap);
 			}
 
-			StringBuilder sb = new StringBuilder();
-
-			sb.append((String) valuesMap.get("mer_order_no"));
-			sb.append((String) valuesMap.get("merchant_no"));
-			sb.append((String) valuesMap.get("notify_url"));
-			sb.append((String) valuesMap.get("amount"));
-			sb.append((String) valuesMap.get("pay_type"));
-			sb.append((String) valuesMap.get("product_name"));
-			sb.append((String) valuesMap.get("remark"));
-			sb.append((String) valuesMap.get("return_url"));
-			sb.append(merchant.getMerchantSecret());
-
-			String signature = MD5Util.string2MD5(sb.toString()).toUpperCase();
+			TreeMap<String, String> signMap = new TreeMap<String, String>();
+			signMap.put("pay_type", payType);
+			signMap.put("merchant_no", merchantNo);
+			signMap.put("amount", amount);
+			signMap.put("merOrderNo", merOrderNo);
+			signMap.put("notify_url", notifyUrl);
+			signMap.put("remark", remark);
+			String signature = MD5Utils.getDigest(signMap, merchant.getMerchantSecret(), "utf-8");
 			if (!signature.equals(valuesMap.get("sign"))) {
 				// 商户验签失败
 				resultMap.put("code", ErrorCode.SC_20002.getCode());
@@ -245,14 +238,6 @@ public class PayOrderController {
 
 	}
 
-//	private int randomValue(int len) {
-//		Random random = new Random();
-//
-//		int index = random.nextInt(len);
-//
-//		return index;
-//	}
-
 	private Map<String, Object> saveData(Map<String, String> valuesMap) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
@@ -260,7 +245,6 @@ public class PayOrderController {
 			Double fee = Double.valueOf(0.035D);
 
 			String sysOrderNo = GenerateOrderUtil.getInstance().GenerateOrder();
-			String orderRemark = getRandomChar(4);
 
 			Map<String, Object> sysParamMap = new HashMap<String, Object>();
 
@@ -278,29 +262,27 @@ public class PayOrderController {
 			userOrder.setUsername((String) valuesMap.get("username"));
 			userOrder.setMerchantNo((String) valuesMap.get("merchant_no"));
 			userOrder.setSysOrderNo(sysOrderNo);
-			userOrder.setMerOrderNo((String) valuesMap.get("mer_order_no"));
+			userOrder.setMerOrderNo((String) valuesMap.get("merOrderNo"));
 			userOrder.setPayType((String) valuesMap.get("pay_type"));
 			userOrder.setOrderAmount(Long.valueOf(Long.parseLong((String) valuesMap.get("amount"))));
 			userOrder.setPayAmount(Double.valueOf(Double.parseDouble((String) valuesMap.get("payAmount"))));
 			userOrder.setOrderFeeAmount(Double.valueOf(Long.parseLong((String) valuesMap.get("amount")) * fee.doubleValue()));
 			userOrder.setOrderCommissionAmount(Double.valueOf(Long.parseLong((String) valuesMap.get("amount")) * 0.01));
 			userOrder.setPayTime(currentDate);
-			//userOrder.setConfirmTime(confirmTime);
-			//userOrder.setConfirmUser(confirmUser);
-			//userOrder.setFailureReason(failureReason);
 			userOrder.setNotifyUrl((String) valuesMap.get("notify_url"));
 			userOrder.setNotifyStatus("0");
 			userOrder.setNotifyNum(Long.valueOf(0L));
 			userOrder.setOrderStatus("1");
-			userOrder.setOrderRemark(orderRemark);
+			userOrder.setOrderRemark((String) valuesMap.get("remark"));
 			userOrder.setCreateTime(currentDate);
 
 			this.userOrderService.insertBUserOrder(userOrder);
 			resultMap.put("code", ErrorCode.SC_10000.getCode());
 			resultMap.put("message", ErrorCode.SC_10000.getMessage());
 			resultMap.put("amount", (String) valuesMap.get("amount"));
-			resultMap.put("sysOrderNo", sysOrderNo);
-			resultMap.put("remark", orderRemark);
+			resultMap.put("merOrderNo", (String) valuesMap.get("merOrderNo"));
+			resultMap.put("remark", (String) valuesMap.get("remark"));
+			
 		} catch (Exception e) {
 			resultMap.put("code", ErrorCode.SC_10001.getCode());
 			resultMap.put("message", ErrorCode.SC_10001.getMessage());
