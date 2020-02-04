@@ -11,6 +11,15 @@ import java.util.List;
  */
 public interface BUserOrderMapper 
 {
+	
+	/**
+     * 查询用户订单记录
+     * 
+     * @param 商户订单号 orderNo
+     * @return 用户订单记录
+     */
+    public BUserOrder selectBUserOrderByOrderNo(String orderNo);
+	
     /**
      * 查询用户订单记录
      * 

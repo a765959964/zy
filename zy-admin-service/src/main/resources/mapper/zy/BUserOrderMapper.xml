@@ -50,6 +50,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBUserOrderVo"/>
         where id = #{id}
     </select>
+    
+    <select id="selectBUserOrderByOrderNo" parameterType="String" resultMap="BUserOrderResult">
+        <include refid="selectBUserOrderVo"/>
+        where mer_order_no = #{orderNo}
+    </select>
         
     <insert id="insertBUserOrder" parameterType="BUserOrder" useGeneratedKeys="true" keyProperty="id">
         insert into b_user_order

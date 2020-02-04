@@ -21,6 +21,19 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     @Autowired
     private BUserOrderMapper bUserOrderMapper;
 
+    
+    /**
+     * 查询用户订单记录
+     * 
+     * @param orderNo
+     * @return 用户订单记录
+     */
+    @Override
+    public BUserOrder selectBUserOrderByOrderNo(String orderNo)
+    {
+        return bUserOrderMapper.selectBUserOrderByOrderNo(orderNo);
+    }
+    
     /**
      * 查询用户订单记录
      * 
