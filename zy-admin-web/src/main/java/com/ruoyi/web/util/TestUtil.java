@@ -2,6 +2,7 @@ package com.ruoyi.web.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -20,39 +21,33 @@ public class TestUtil {
 	private static ObjectMapper mapper = new ObjectMapper();
 	
 	public static void main(String[] args) {
-		Map<String, String> valuesMap = new HashMap<String,String>();
+		TreeMap<String, String> valuesMap = new TreeMap<String,String>();
 		valuesMap.put("pay_type","1001");
 		valuesMap.put("merchant_no", "venn");
 		valuesMap.put("amount","100");
-		valuesMap.put("mer_order_no","20200109");
+		valuesMap.put("merOrderNo","20200109");
 		valuesMap.put("notify_url","http://baidu.com");
-		valuesMap.put("product_name","venn");
 		valuesMap.put("remark","备注");
-		valuesMap.put("return_url","http://baidu.com");
-		StringBuilder sb = new StringBuilder();
-		sb.append((String) valuesMap.get("mer_order_no"));
-		sb.append((String) valuesMap.get("merchant_no"));
-		sb.append((String) valuesMap.get("notify_url"));
-		sb.append((String) valuesMap.get("amount"));
-		sb.append((String) valuesMap.get("pay_type"));
-		sb.append((String) valuesMap.get("product_name"));
-		sb.append((String) valuesMap.get("remark"));
-		sb.append((String) valuesMap.get("return_url"));
-		sb.append("abc1234");
+//		StringBuilder sb = new StringBuilder();
+//		sb.append((String) valuesMap.get("merOrderNo"));
+//		sb.append((String) valuesMap.get("merchant_no"));
+//		sb.append((String) valuesMap.get("notify_url"));
+//		sb.append((String) valuesMap.get("amount"));
+//		sb.append((String) valuesMap.get("pay_type"));
+//		sb.append((String) valuesMap.get("remark"));
+//		sb.append("abc1234");
 
-		String signature = MD5Util.string2MD5(sb.toString()).toUpperCase();
-		
-		
+//		String signature = MD5Util.string2MD5(sb.toString()).toUpperCase();
+		System.out.println(valuesMap);
+		String signature = MD5Utils.getDigest(valuesMap, "abc1234", "utf-8");
 		try {
 			Map<String, String> map = new HashMap<String,String>();
 			map.put("pay_type","1001");
 			map.put("merchant_no", "venn");
 			map.put("amount","100");
-			map.put("mer_order_no","20200109");
+			map.put("merOrderNo","20200109");
 			map.put("notify_url","http://baidu.com");
-			map.put("product_name","venn");
 			map.put("remark","备注");
-			map.put("return_url","http://baidu.com");
 			map.put("sign",signature);
 			String params = mapper.writeValueAsString(map);
 			String response = doPost("http://127.0.0.1:8023/api/pay/order/gateway", params);
@@ -92,4 +87,6 @@ public class TestUtil {
 		}
 		return null;
 	}
+	
+	
 }
