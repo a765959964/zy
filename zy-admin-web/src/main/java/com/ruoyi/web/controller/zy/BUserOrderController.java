@@ -1,23 +1,22 @@
 package com.ruoyi.web.controller.zy;
 
-import java.util.List;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.zy.domain.BUserOrder;
+import com.ruoyi.zy.service.IBUserOrderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.zy.domain.BUserOrder;
-import com.ruoyi.zy.service.IBUserOrderService;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户订单记录Controller
@@ -41,6 +40,19 @@ public class BUserOrderController extends BaseController
         return prefix + "/userorder";
     }
 
+
+    /**
+     * 收款金额
+     * @return
+     */
+    @RequiresPermissions("zy:userorder:view")
+    @GetMapping("/ordermoney")
+    public String ordermoney()
+    {
+        return prefix + "/ordermoney";
+    }
+
+
     /**
      * 查询用户订单记录列表
      */
@@ -53,6 +65,32 @@ public class BUserOrderController extends BaseController
         List<BUserOrder> list = bUserOrderService.selectBUserOrderList(bUserOrder);
         return getDataTable(list);
     }
+
+
+    /**
+     * 查询用户订单记录列表
+     */
+    @RequiresPermissions("zy:userorder:list")
+    @PostMapping("/getOrderMoneyList")
+    @ResponseBody
+    public TableDataInfo getOrderMoneyList(BUserOrder bUserOrder)
+    {
+        Map params = new HashMap();
+
+        if(bUserOrder.getUsername() !=null ){
+            params.put("username",bUserOrder.getUsername());
+        }
+
+        if(bUserOrder.getPayType() != null){
+            params.put("payType",bUserOrder.getPayType());
+        }
+
+        startPage();
+        List list = bUserOrderService.getOrderMoneyList(params);
+        return getDataTable(list);
+    }
+
+
 
     /**
      * 导出用户订单记录列表

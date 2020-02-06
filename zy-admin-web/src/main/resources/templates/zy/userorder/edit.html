@@ -2,14 +2,41 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('修改用户订单记录')" />
+    <th:block th:include="include :: datetimepicker-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-userorder-edit" th:object="${bUserOrder}">
             <input name="id" th:field="*{id}" type="hidden">
+            <input name="notifyUrl" th:field="*{notifyUrl}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">用户名：</label>
+                <div class="col-sm-8">
+                    <input name="username"  th:field="*{username}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">商户订单号：</label>
+                <div class="col-sm-8">
+                    <input name="merOrderNo" th:field="*{merOrderNo}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">订单金额：</label>
+                <div class="col-sm-8">
+                    <input name="orderAmount" th:field="*{orderAmount}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">订单创建时间：</label>
+                <div class="col-sm-8">
+                    <input name="payTime" th:value="${#dates.format(bUserOrder.payTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" readonly>
+                </div>
+            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
     <script type="text/javascript">
         var prefix = ctx + "zy/userorder";
         $("#form-userorder-edit").validate({
@@ -17,10 +44,16 @@
         });
 
         function submitHandler() {
-            if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-userorder-edit').serialize());
-            }
+           var url =  $("input[name='notifyUrl']").val();
+           var merOrderNo =  $("input[name='merOrderNo']").val();
+           var data = {notifyUrl : url,merOrderNo : merOrderNo };
+            $.operate.post(url,data,function (res) {
+                console.log(res);
+            })
         }
+
+
+
     </script>
 </body>
 </html>
