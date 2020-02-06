@@ -272,7 +272,7 @@ public class PayOrderController {
 			userOrder.setNotifyUrl((String) valuesMap.get("notify_url"));
 			userOrder.setNotifyStatus("0");
 			userOrder.setNotifyNum(Long.valueOf(0L));
-			userOrder.setOrderStatus("1");
+			userOrder.setOrderStatus("0");
 			userOrder.setOrderRemark((String) valuesMap.get("remark"));
 			userOrder.setCreateTime(currentDate);
 
