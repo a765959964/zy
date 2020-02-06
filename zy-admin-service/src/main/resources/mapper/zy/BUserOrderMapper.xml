@@ -45,7 +45,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="notifyStatus != null  and notifyStatus != ''"> and notify_status = #{notifyStatus}</if>
         </where>
     </select>
-    
+
+    <!-- 查询用户订单金额  -->
+    <select id="getOrderMoneyList" resultType="java.util.Map">
+          SELECT
+            dd.dict_label dictLabel,
+            t.order_amount orderAmount,
+            t.username,
+            ud.earnest_money earnestMoney,
+            (
+                ud.earnest_money - ud.receipt_amount
+            ) money,
+            t.pay_time payTime
+        FROM
+            b_user_order t
+        LEFT JOIN b_user_deposit ud ON t.username = ud.username
+        left join sys_dict_data dd on dd.dict_value = t.pay_type
+        <where>
+            <if test="username != null  and username != ''"> and t.username = #{username}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+        </where>
+    </select>
+
     <select id="selectBUserOrderById" parameterType="Long" resultMap="BUserOrderResult">
         <include refid="selectBUserOrderVo"/>
         where id = #{id}

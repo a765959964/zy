@@ -1,13 +1,15 @@
 package com.ruoyi.zy.service.impl;
 
-import java.util.List;
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.zy.domain.BUserOrder;
+import com.ruoyi.zy.mapper.BUserOrderMapper;
+import com.ruoyi.zy.service.IBUserOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.zy.mapper.BUserOrderMapper;
-import com.ruoyi.zy.domain.BUserOrder;
-import com.ruoyi.zy.service.IBUserOrderService;
-import com.ruoyi.common.core.text.Convert;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户订单记录Service业务层处理
@@ -56,6 +58,11 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     public List<BUserOrder> selectBUserOrderList(BUserOrder bUserOrder)
     {
         return bUserOrderMapper.selectBUserOrderList(bUserOrder);
+    }
+
+    @Override
+    public List getOrderMoneyList(Map params) {
+        return bUserOrderMapper.getOrderMoneyList(params);
     }
 
     /**

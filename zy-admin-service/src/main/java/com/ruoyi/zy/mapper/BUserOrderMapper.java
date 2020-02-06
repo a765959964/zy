@@ -1,7 +1,9 @@
 package com.ruoyi.zy.mapper;
 
 import com.ruoyi.zy.domain.BUserOrder;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户订单记录Mapper接口
@@ -35,6 +37,14 @@ public interface BUserOrderMapper
      * @return 用户订单记录集合
      */
     public List<BUserOrder> selectBUserOrderList(BUserOrder bUserOrder);
+
+
+    /**
+     * 查询用户订单金额
+     * @param params
+     * @return
+     */
+    List getOrderMoneyList(Map params);
 
     /**
      * 新增用户订单记录
