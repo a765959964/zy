@@ -44,7 +44,7 @@ public interface BUserOrderMapper
      * @param params
      * @return
      */
-    List getOrderMoneyList(Map params);
+    List<Map<String, String>> getOrderMoneyList(Map<String, String> params);
 
     /**
      * 新增用户订单记录

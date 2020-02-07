@@ -43,6 +43,18 @@ public class BUserReceiptServiceImpl implements IBUserReceiptService
     {
         return bUserReceiptMapper.selectBUserReceiptById(id);
     }
+    
+    /**
+     * 查询收款次数
+     * 
+     * @param userName
+     * @return 收款次数
+     */
+    @Override
+    public BUserReceipt selectBUserReceiptByUserName(String userName)
+    {
+        return bUserReceiptMapper.selectBUserReceiptByUserName(userName);
+    }
 
     /**
      * 查询收款次数列表

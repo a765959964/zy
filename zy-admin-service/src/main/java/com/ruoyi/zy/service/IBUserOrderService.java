@@ -43,7 +43,7 @@ public interface IBUserOrderService
      * @param params
      * @return
      */
-    List getOrderMoneyList(Map params);
+    List<Map<String, String>> getOrderMoneyList(Map<String, String> params);
 
 
     /**

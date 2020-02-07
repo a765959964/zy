@@ -61,7 +61,7 @@ public class BUserOrderServiceImpl implements IBUserOrderService
     }
 
     @Override
-    public List getOrderMoneyList(Map params) {
+    public List<Map<String, String>> getOrderMoneyList(Map<String, String> params) {
         return bUserOrderMapper.getOrderMoneyList(params);
     }
 

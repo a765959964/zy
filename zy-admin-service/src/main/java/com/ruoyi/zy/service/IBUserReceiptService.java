@@ -24,6 +24,14 @@ public interface IBUserReceiptService
      * @return 收款次数
      */
     public BUserReceipt selectBUserReceiptById(Long id);
+    
+    /**
+     * 查询收款次数
+     * 
+     * @param id 收款次数ID
+     * @return 收款次数
+     */
+    public BUserReceipt selectBUserReceiptByUserName(String userName);
 
     /**
      * 查询收款次数列表

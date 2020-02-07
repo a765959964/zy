@@ -54,6 +54,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBUserReceiptVo"/>
         where id = #{id}
     </select>
+    
+    <select id="selectBUserReceiptByUserName" parameterType="String" resultMap="BUserReceiptResult">
+        <include refid="selectBUserReceiptVo"/>
+        where username = #{userName}
+    </select>
         
     <insert id="insertBUserReceipt" parameterType="BUserReceipt" useGeneratedKeys="true" keyProperty="id">
         insert into b_user_receipt
