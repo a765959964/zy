@@ -270,9 +270,10 @@ public class PayOrderController {
 			userOrder.setOrderCommissionAmount(Double.valueOf(Long.parseLong((String) valuesMap.get("amount")) * 0.01));
 			userOrder.setPayTime(currentDate);
 			userOrder.setNotifyUrl((String) valuesMap.get("notify_url"));
+			//0未回调  1回调失败  2回调成功
 			userOrder.setNotifyStatus("0");
 			userOrder.setNotifyNum(Long.valueOf(0L));
-			userOrder.setOrderStatus("0");
+			userOrder.setOrderStatus("0");//0未支付   1已支付
 			userOrder.setOrderRemark((String) valuesMap.get("remark"));
 			userOrder.setCreateTime(currentDate);
 
