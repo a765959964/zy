@@ -7,13 +7,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="BUserReceipt" id="BUserReceiptResult">
         <result property="id"    column="id"    />
         <result property="username"    column="username"    />
+        <result property="agent"    column="agent"    />
         <result property="wechatReceiptTimes"    column="wechat_receipt_times"    />
         <result property="alipayReceiptTimes"    column="alipay_receipt_times"    />
+        <result property="status"    column="status"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectBUserReceiptVo">
-        select id, username, wechat_receipt_times, alipay_receipt_times, update_time from b_user_receipt
+        select id, username,agent, wechat_receipt_times, alipay_receipt_times,status, update_time from b_user_receipt
     </sql>
     
     <select id="findList" parameterType="java.util.Map" resultMap="BUserReceiptResult">
@@ -64,14 +66,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into b_user_receipt
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="username != null  and username != ''">username,</if>
+            <if test="agent !=null and agent !='' ">agent,</if>
             <if test="wechatReceiptTimes != null ">wechat_receipt_times,</if>
             <if test="alipayReceiptTimes != null ">alipay_receipt_times,</if>
+            <if test="status !=null and status != '' ">status,</if>
             <if test="updateTime != null ">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="username != null  and username != ''">#{username},</if>
+            <if test="agent !=null and agent !='' ">#{agent},</if>
             <if test="wechatReceiptTimes != null ">#{wechatReceiptTimes},</if>
             <if test="alipayReceiptTimes != null ">#{alipayReceiptTimes},</if>
+            <if test="status !=null and status != '' ">#{status},</if>
             <if test="updateTime != null ">#{updateTime},</if>
          </trim>
     </insert>

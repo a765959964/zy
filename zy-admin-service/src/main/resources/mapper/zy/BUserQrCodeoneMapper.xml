@@ -51,6 +51,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiptType != null  and receiptType != ''">receipt_type,</if>
             <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">receipt_qrcode_url,</if>
             <if test="receiptQrcodeCode != null  and receiptQrcodeCode != ''">receipt_qrcode_code,</if>
+            <if test="agent != null  and agent != ''">agent,</if>
+            <if test="status != null  and status != ''">status,</if>
             <if test="createTime != null ">create_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -58,6 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiptType != null  and receiptType != ''">#{receiptType},</if>
             <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">#{receiptQrcodeUrl},</if>
             <if test="receiptQrcodeCode != null  and receiptQrcodeCode != ''">#{receiptQrcodeCode},</if>
+            <if test="agent != null  and agent != ''">#{agent},</if>
+            <if test="status != null  and status != ''">#{status},</if>
             <if test="createTime != null ">#{createTime},</if>
          </trim>
     </insert>
@@ -69,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiptType != null  and receiptType != ''">receipt_type = #{receiptType},</if>
             <if test="receiptQrcodeUrl != null  and receiptQrcodeUrl != ''">receipt_qrcode_url = #{receiptQrcodeUrl},</if>
             <if test="receiptQrcodeCode != null  and receiptQrcodeCode != ''">receipt_qrcode_code = #{receiptQrcodeCode},</if>
+            <if test="agent != null  and agent != ''">agent = #{agent},</if>
             <if test="status != null  and status != ''">status = #{status},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
         </trim>

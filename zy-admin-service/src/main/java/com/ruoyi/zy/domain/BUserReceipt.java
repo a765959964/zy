@@ -1,9 +1,11 @@
 package com.ruoyi.zy.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 收款次数对象 b_user_receipt
@@ -33,6 +35,12 @@ public class BUserReceipt extends BaseEntity
     /** 支付宝收款次数 */
     @Excel(name = "支付宝收款次数")
     private int alipayReceiptTimes;
+
+    @Excel(name = "Y开启 N关闭")
+    private String status;
+
+    @Excel(name = "修改时间")
+    private Date updateTime;
 
     public void setId(Long id) 
     {
@@ -79,7 +87,23 @@ public class BUserReceipt extends BaseEntity
 		this.agent = agent;
 	}
 
-	@Override
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -88,6 +112,8 @@ public class BUserReceipt extends BaseEntity
             .append("alipayReceiptTimes", getAlipayReceiptTimes())
             .append("updateTime", getUpdateTime())
             .append("agent", getAgent())
+            .append("status", getStatus())
+            .append("agent", getUpdateTime())
             .toString();
     }
 }
