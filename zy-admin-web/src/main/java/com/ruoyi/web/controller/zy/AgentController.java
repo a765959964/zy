@@ -66,23 +66,18 @@ public class AgentController extends BaseController
     public TableDataInfo getAgentList(Agent agent)
     {
         startPage();
-        Map  params = new HashMap();
+        Map<String, String>  params = new HashMap<String, String>();
 
         SysUser sysUser =  ShiroUtils.getSysUser();
 
         if(agent !=null){
             if(agent.getStatus() !=null){
-                params.put("statue",agent.getStatus());
+                params.put("status",agent.getStatus());
             }
 
 
             if(agent.getAgentName()  != null){
                 params.put("agentName", agent.getAgentName());
-            }
-
-
-            if(agent.getStatus()  != null){
-                params.put("status", agent.getStatus());
             }
         }
 
