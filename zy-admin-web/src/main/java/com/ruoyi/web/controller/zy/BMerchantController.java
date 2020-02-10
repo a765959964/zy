@@ -1,23 +1,22 @@
 package com.ruoyi.web.controller.zy;
 
-import java.util.List;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.zy.domain.BMerchant;
+import com.ruoyi.zy.service.IBMerchantService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.zy.domain.BMerchant;
-import com.ruoyi.zy.service.IBMerchantService;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 商户信息Controller
@@ -50,6 +49,13 @@ public class BMerchantController extends BaseController
     public TableDataInfo list(BMerchant bMerchant)
     {
         startPage();
+
+        // 取身份信息
+        SysUser user = ShiroUtils.getSysUser();
+        if(!user.isAdmin()){    // 不是管理员 取当前账户
+            bMerchant.setMerchantNo(user.getLoginName());
+        }
+
         List<BMerchant> list = bMerchantService.selectBMerchantList(bMerchant);
         return getDataTable(list);
     }

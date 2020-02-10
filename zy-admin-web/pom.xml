@@ -73,6 +73,14 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-framework</artifactId>
         </dependency>
+
+        <!-- 后台service 模块 -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>zy-admin-service</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+
         
         <!-- 定时任务-->
         <dependency>

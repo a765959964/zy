@@ -144,10 +144,14 @@ public class UserQrCodeoneController extends BaseController
                 userQrCodeone.setReceiptQrcodeCode(str);
                 userQrCodeone.setAgent(ShiroUtils.getSysUser().getLoginName());
                 userQrCodeone.setCreateTime(DateUtils.getNowDate());
+                userQrCodeone.setStatus("Y");
+                userQrCodeone.setUsername(userQrCodeone.getUsername());
+
                 userReceipt.setUsername(userQrCodeone.getUsername());
                 userReceipt.setAgent(ShiroUtils.getSysUser().getLoginName());
                 userReceipt.setWechatReceiptTimes(0);
                 userReceipt.setAlipayReceiptTimes(0);
+                userReceipt.setStatus("Y");
                 userReceipt.setUpdateTime(DateUtils.getNowDate());
                 userReceiptService.insertBUserReceipt(userReceipt);
                 return toAjax(userQrCodeoneService.insertBUserQrCodeone(userQrCodeone));

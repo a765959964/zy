@@ -6,6 +6,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.zy.domain.Agent;
 import com.ruoyi.zy.service.IAgentService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -49,6 +51,7 @@ public class AgentController extends BaseController
     public TableDataInfo list(Agent agent)
     {
         startPage();
+
         List<Agent> list = agentService.selectAgentList(agent);
         return getDataTable(list);
     }
@@ -64,13 +67,14 @@ public class AgentController extends BaseController
     {
         startPage();
         Map  params = new HashMap();
+
+        SysUser sysUser =  ShiroUtils.getSysUser();
+
         if(agent !=null){
             if(agent.getStatus() !=null){
                 params.put("statue",agent.getStatus());
             }
-            if(agent.getAgentCode() !=null ){
-                params.put("agentCode" , agent.getAgentCode());
-            }
+
 
             if(agent.getAgentName()  != null){
                 params.put("agentName", agent.getAgentName());
@@ -81,6 +85,16 @@ public class AgentController extends BaseController
                 params.put("status", agent.getStatus());
             }
         }
+
+        if(!sysUser.isAdmin()){
+            params.put("agentCode" , sysUser.getLoginName());
+        }else{
+            if(agent.getAgentCode() !=null ){
+                params.put("agentCode" , agent.getAgentCode());
+            }
+        }
+
+
 
 
         List list = agentService.getAgentList(params);
