@@ -1,7 +1,9 @@
 package com.ruoyi.zy.service.impl;
 
+import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import com.ruoyi.zy.mapper.BUserQrCodeoneMapper;
 import com.ruoyi.zy.service.IBUserQrCodeoneService;
@@ -50,6 +52,19 @@ public class BUserQrCodeoneServiceImpl implements IBUserQrCodeoneService
     public List<BUserQrCodeone> selectBUserQrCodeoneList(BUserQrCodeone bUserQrCodeone)
     {
         return bUserQrCodeoneMapper.selectBUserQrCodeoneList(bUserQrCodeone);
+    }
+
+    @Override
+    public String checkUserNameUnique(BUserQrCodeone bUserQrCodeone) {
+
+        Long id = StringUtils.isNull(bUserQrCodeone.getId()) ? -1L : bUserQrCodeone.getId();
+        BUserQrCodeone info =  bUserQrCodeoneMapper.checkUserNameUnique(bUserQrCodeone.getUsername());
+        if (StringUtils.isNotNull(info) && info.getId() != id.longValue())
+        {
+            return UserConstants.USER_PHONE_NOT_UNIQUE;
+        }
+        return UserConstants.USER_PHONE_UNIQUE;
+
     }
 
     /**

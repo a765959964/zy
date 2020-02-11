@@ -114,6 +114,18 @@ public class UserQrCodeoneController extends BaseController
         return util.exportExcel(list, "usercodeone");
     }
 
+
+    /**
+     * 校验用户名是否唯一
+     */
+    @PostMapping("/checkUserNameUnique")
+    @ResponseBody
+    public String checkUserNameUnique(BUserQrCodeone userQrCodeone)
+    {
+        return userQrCodeoneService.checkUserNameUnique(userQrCodeone);
+    }
+
+
     /**
      * 新增收款码管理
      */

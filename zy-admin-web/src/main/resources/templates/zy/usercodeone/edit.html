@@ -46,6 +46,34 @@
     <script type="text/javascript">
         var prefix = ctx + "zy/usercodeone";
         $("#form-usercodeone-edit").validate({
+            onkeyup: false,
+            rules:{
+                username:{
+                    minlength: 2,
+                    maxlength: 20,
+                    remote: {
+                        url: prefix + "/checkUserNameUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "id" : function(){
+                                return $.common.trim($("#id").val());
+                            },
+                            "username": function () {
+                                return $.common.trim($("#username").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
+            },
+            messages: {
+                "username":{
+                    remote: "用户名已存在！"
+                }
+            },
             focusCleanup: true
         });
 

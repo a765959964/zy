@@ -48,6 +48,15 @@ public interface BUserQrCodeoneMapper
     public int updateBUserQrCodeone(BUserQrCodeone bUserQrCodeone);
 
     /**
+     * 校验用户名称是否唯一
+     *
+     * @param username 用户名
+     * @return 结果
+     */
+    public BUserQrCodeone checkUserNameUnique(String username);
+
+
+    /**
      * 删除收款码管理
      * 
      * @param id 收款码管理ID

@@ -31,9 +31,19 @@ public interface IBUserQrCodeoneService
      */
     public List<BUserQrCodeone> selectBUserQrCodeoneList(BUserQrCodeone bUserQrCodeone);
 
+
+
+    /**
+     * 校验用户名称是否唯一
+     *
+     * @param bUserQrCodeone 登录名称
+     * @return 结果
+     */
+    public String checkUserNameUnique(BUserQrCodeone bUserQrCodeone);
+
     /**
      * 新增收款码管理
-     * 
+     *
      * @param bUserQrCodeone 收款码管理
      * @return 结果
      */

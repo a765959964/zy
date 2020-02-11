@@ -42,8 +42,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="username != null and username != ''">and username = #{username}</if>
         <if test="receiptType != null and receiptType != ''">and receipt_type = #{receiptType}</if>
     </select>
-    
-        
+
+    <!--  验证用户名是否存在  -->
+    <select id="checkUserNameUnique" parameterType="String" resultMap="BUserQrCodeoneResult">
+        select  id,username from  b_user_qr_codeone where username=#{username}
+    </select>
+
     <insert id="insertBUserQrCodeone" parameterType="BUserQrCodeone" useGeneratedKeys="true" keyProperty="id">
         insert into b_user_qr_codeone
         <trim prefix="(" suffix=")" suffixOverrides=",">
