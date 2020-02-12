@@ -64,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="username != null  and username != ''"> and t.username = #{username}</if>
             <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            and  DATE_FORMAT(t.pay_time,'%Y%m%d') =DATE_FORMAT( now(),'%Y%m%d')
         </where>
     </select>
 
