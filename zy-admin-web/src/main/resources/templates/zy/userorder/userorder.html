@@ -179,9 +179,18 @@
                         var orderAmount = row.orderAmount;
                         var payTime = row.payTime;
                         var notifyUrl = row.notifyUrl;
+                        var orderStatus = row.orderStatus;
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="confirm(\''+username+ '\',\''+merOrderNo+ '\',\''+orderAmount+ '\',\''+payTime+ '\',\''+notifyUrl+ '\')">' +
+                        if(orderStatus == 0){
+                        	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="resume(\''+username+ '\',\''+merOrderNo+ '\',\''+orderAmount+ '\',\''+payTime+ '\')">' +
+                            '<i class="fa fa-edit"></i>恢复订单</a> ');
+                        }
+                        if(orderStatus == 1){
+                        	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="confirm(\''+username+ '\',\''+merOrderNo+ '\',\''+orderAmount+ '\',\''+payTime+ '\',\''+notifyUrl+ '\')">' +
                             '<i class="fa fa-edit"></i>手动确认收款</a> ');
+                        	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="cancel(\''+username+ '\',\''+merOrderNo+ '\',\''+orderAmount+ '\',\''+payTime+ '\')">' +
+                            '<i class="fa fa-edit"></i>取消</a> ');
+                        }
                         return actions.join('');
                     }
                 }]
@@ -189,9 +198,27 @@
             $.table.init(options);
         });
         function confirm(a,b,c,d,e) {
-            var data = {notifyUrl : notifyUrl,merOrderNo : merOrderNo };
+            var data = {notifyUrl : e,merOrderNo : b };
             $.modal.confirm("确认要手动收款吗？<br/>用户名:"+a+"<br/>商户订单号:" + b +"<br/>订单金额：" + c +"<br/>订单时间:"+d, function() {
                 $.operate.post(prefix+"/callback",data,function (res) {
+                	
+                })
+            })
+        }
+        
+        function cancel(a,b,c,d) {
+            var data = {merOrderNo : b };
+            $.modal.confirm("确认要取消订单吗？<br/>用户名:"+a+"<br/>商户订单号:" + b +"<br/>订单金额：" + c +"<br/>订单时间:"+d, function() {
+                $.operate.post(prefix+"/cancel",data,function (res) {
+                	
+                })
+            })
+        }
+        
+        function resume(a,b,c,d) {
+            var data = {merOrderNo : b };
+            $.modal.confirm("确认要恢复订单吗？<br/>用户名:"+a+"<br/>商户订单号:" + b +"<br/>订单金额：" + c +"<br/>订单时间:"+d, function() {
+                $.operate.post(prefix+"/resume",data,function (res) {
                 	
                 })
             })

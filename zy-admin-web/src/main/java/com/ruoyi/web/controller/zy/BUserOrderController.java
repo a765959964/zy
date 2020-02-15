@@ -270,6 +270,66 @@ public class BUserOrderController extends BaseController
     	return null;
     }
     
+    /**
+     * 订单取消
+     */
+    @RequiresPermissions("zy:userorder:cancel")
+    @Log(title = "订单取消", businessType = BusinessType.OTHER)
+    @PostMapping("/cancel")
+    @ResponseBody
+    public AjaxResult cancel(String merOrderNo)
+    {
+    	synchronized (this) {
+    		try {
+    			BUserOrder userOrder = bUserOrderService.selectBUserOrderByOrderNo(merOrderNo);
+        		if(userOrder == null) {
+        			logger.info("订单取消参数：订单记录不存在");
+        			return error();
+        		}
+        		userOrder.setOrderStatus("0");
+				userOrder.setConfirmTime(new Date());
+				userOrder.setConfirmUser(ShiroUtils.getSysUser().getLoginName());
+				bUserOrderService.updateBUserOrder(userOrder);
+				return success();
+    		} catch (Exception e) {
+    			logger.info("订单取消参数：系统异常"+e.getMessage());
+    			e.printStackTrace();
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * 订单恢复
+     */
+    @RequiresPermissions("zy:userorder:resume")
+    @Log(title = "订单恢复", businessType = BusinessType.OTHER)
+    @PostMapping("/resume")
+    @ResponseBody
+    public AjaxResult resume(String merOrderNo)
+    {
+    	synchronized (this) {
+    		try {
+    			BUserOrder userOrder = bUserOrderService.selectBUserOrderByOrderNo(merOrderNo);
+        		if(userOrder == null) {
+        			logger.info("订单恢复参数：订单记录不存在");
+        			return error();
+        		}
+        		
+        		userOrder.setOrderStatus("1");
+				userOrder.setConfirmTime(new Date());
+				userOrder.setConfirmUser(ShiroUtils.getSysUser().getLoginName());
+				bUserOrderService.updateBUserOrder(userOrder);
+				return success();
+    			
+    		} catch (Exception e) {
+    			logger.info("订单恢复参数：系统异常"+e.getMessage());
+    			e.printStackTrace();
+    		}
+    	}
+    	return null;
+    }
+    
     public static String doPost(String url, String params) throws Exception {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);
