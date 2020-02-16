@@ -17,6 +17,8 @@ import com.ruoyi.zy.service.IMerchantWithdrawalService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -50,6 +52,11 @@ public class MerchantWithdrawalController extends BaseController
     public TableDataInfo list(MerchantWithdrawal merchantWithdrawal)
     {
         startPage();
+        // 取身份信息
+        SysUser user = ShiroUtils.getSysUser();
+        if(!user.isAdmin()){    // 不是管理员 取当前账户
+        	merchantWithdrawal.setMerchantNo(user.getLoginName());
+        }
         List<MerchantWithdrawal> list = merchantWithdrawalService.selectMerchantWithdrawalList(merchantWithdrawal);
         return getDataTable(list);
     }

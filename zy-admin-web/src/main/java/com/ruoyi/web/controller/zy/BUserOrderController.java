@@ -9,6 +9,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.util.MD5Utils;
 import com.ruoyi.zy.domain.BMerchant;
 import com.ruoyi.zy.domain.BUserOrder;
@@ -95,13 +96,17 @@ public class BUserOrderController extends BaseController
     public TableDataInfo list(BUserOrder bUserOrder)
     {
         startPage();
+        SysUser sysUser =  ShiroUtils.getSysUser();
+        if(!sysUser.isAdmin()){
+        	bUserOrder.setAgent(sysUser.getLoginName());
+        }
         List<BUserOrder> list = bUserOrderService.selectBUserOrderList(bUserOrder);
         return getDataTable(list);
     }
 
 
     /**
-     * 查询用户订单记录列表
+     * 查询当日收款记录
      */
     @RequiresPermissions("zy:userorder:list")
     @PostMapping("/getOrderMoneyList")
@@ -117,7 +122,10 @@ public class BUserOrderController extends BaseController
         if(bUserOrder.getPayType() != null){
             params.put("payType",bUserOrder.getPayType());
         }
-
+        SysUser sysUser =  ShiroUtils.getSysUser();
+        if(!sysUser.isAdmin()){
+            params.put("agent" , sysUser.getLoginName());
+        }
         startPage();
         List<Map<String, String>> list = bUserOrderService.getOrderMoneyList(params);
         return getDataTable(list);

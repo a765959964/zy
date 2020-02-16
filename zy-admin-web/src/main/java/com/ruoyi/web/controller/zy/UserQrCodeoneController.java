@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.util.QRCodeUtil;
 import com.ruoyi.zy.domain.BUserQrCodeone;
 import com.ruoyi.zy.domain.BUserReceipt;
@@ -59,6 +60,10 @@ public class UserQrCodeoneController extends BaseController
     public TableDataInfo list(BUserQrCodeone userQrCodeone)
     {
         startPage();
+        SysUser sysUser =  ShiroUtils.getSysUser();
+        if(!sysUser.isAdmin()){
+        	userQrCodeone.setAgent(sysUser.getLoginName());
+        }
         List<BUserQrCodeone> list = userQrCodeoneService.selectBUserQrCodeoneList(userQrCodeone);
         return getDataTable(list);
     }

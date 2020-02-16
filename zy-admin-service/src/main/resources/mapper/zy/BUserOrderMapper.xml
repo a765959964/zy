@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           SELECT
             dd.dict_label dictLabel,
             t.order_amount orderAmount,
-            t.username,
+            t.agent,
             ud.earnest_money earnestMoney,
             (
                 ud.earnest_money - ud.receipt_amount
@@ -59,13 +59,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t.pay_time payTime
         FROM
             b_user_order t
-        LEFT JOIN b_user_deposit ud ON t.username = ud.username
+        LEFT JOIN b_user_deposit ud ON t.agent = ud.agent
         left join sys_dict_data dd on dd.dict_value = t.pay_type
         <where>
             <if test="username != null  and username != ''"> and t.username = #{username}</if>
-            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            <if test="payType != null  and payType != ''"> and t.pay_type = #{payType}</if>
+            <if test="agent != null  and agent != ''"> and t.agent = #{agent}</if>
             and  DATE_FORMAT(t.pay_time,'%Y%m%d') =DATE_FORMAT( now(),'%Y%m%d')
         </where>
+        group by t.agent,t.pay_type
     </select>
 
     <select id="selectBUserOrderById" parameterType="Long" resultMap="BUserOrderResult">
