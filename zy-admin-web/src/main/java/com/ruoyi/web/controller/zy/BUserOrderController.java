@@ -7,6 +7,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
@@ -234,16 +235,19 @@ public class BUserOrderController extends BaseController
         		valuesMap.put("sign", signature);
     			String params = mapper.writeValueAsString(valuesMap);
     			logger.info("商户回调参数："+params);
-    			String response = doPost(notifyUrl, params);
-    			if(StringUtils.isBlank(response)) {
-    				logger.info("商户回调参数：商户回调返回异常");
-    				return error();
-    			}
+    			//以下代码先注释
+//    			String response = doPost(notifyUrl, params);
+//    			if(StringUtils.isBlank(response)) {
+//    				logger.info("商户回调参数：商户回调返回异常");
+//    				return error();
+//    			}
     			//returnCode 示例值：SUCCESS/FAIL
     			//returnMsg  示例值：签名失败/订单号不存在/订单金额有误
-    			JSONObject jsonObject = JSONObject.parseObject(response);
-    			String returnCode = jsonObject.getString("return_code");
-    			String returnMsg = jsonObject.getString("return_msg");
+//    			JSONObject jsonObject = JSONObject.parseObject(response);
+//    			String returnCode = jsonObject.getString("return_code");
+//    			String returnMsg = jsonObject.getString("return_msg");
+    			String returnCode = "SUCCESS";
+    			String returnMsg = "";
     			if("SUCCESS".equals(returnCode)) {
     				userOrder.setOrderStatus("1");
     				userOrder.setNotifyStatus("2");
@@ -367,5 +371,43 @@ public class BUserOrderController extends BaseController
 		}
 		return null;
 	}
+    
+    /**
+     * 测试方法
+     */
+    @RequiresPermissions("zy:userorder:test")
+    @Log(title = "订单测试", businessType = BusinessType.OTHER)
+    @PostMapping("/test")
+    @ResponseBody
+    public AjaxResult test(String merOrderNo)
+    {
+    	TreeMap<String, String> valuesMap = new TreeMap<String,String>();
+		valuesMap.put("pay_type","1001");
+		valuesMap.put("merchant_no", "ceshi");
+		valuesMap.put("amount","1");
+		String orderNo = DateUtils.dateTimeNow();
+		valuesMap.put("merOrderNo",orderNo);
+		valuesMap.put("notify_url","http://127.0.0.1:8023/zy/userorder/callback");
+		valuesMap.put("remark","备注");
+
+		System.out.println(valuesMap);
+		String signature = MD5Utils.getDigest(valuesMap, "abcdefghijklm", "utf-8");
+		try {
+			Map<String, String> map = new HashMap<String,String>();
+			map.put("pay_type","1001");
+			map.put("merchant_no", "ceshi");
+			map.put("amount","1");
+			map.put("merOrderNo",orderNo);
+			map.put("notify_url","http://127.0.0.1:8023/zy/userorder/callback");
+			map.put("remark","备注");
+			map.put("sign",signature);
+			String params = mapper.writeValueAsString(map);
+			String response = doPost("http://127.0.0.1:8024/api/pay/order/gateway", params);
+			return success(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
     
 }
