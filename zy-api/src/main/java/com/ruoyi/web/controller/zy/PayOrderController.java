@@ -113,7 +113,6 @@ public class PayOrderController {
 					depositMap.put("receiptType", receiptType);
 					depositMap.put("reviewStatus", "3");
 					depositMap.put("flag", "Y");
-					depositMap.put("status", "2");
 					depositMap.put("orderAmount", Long.valueOf(Long.parseLong(amount)));
 					depositMap.put("agent", agent);
 					depositList = this.userDepositService.available(depositMap);
@@ -273,7 +272,7 @@ public class PayOrderController {
 			//0未回调  1回调失败  2回调成功
 			userOrder.setNotifyStatus("0");
 			userOrder.setNotifyNum(Long.valueOf(0L));
-			userOrder.setOrderStatus("0");//0未支付   1已支付
+			userOrder.setOrderStatus("1");//0已取消   1未支付
 			userOrder.setOrderRemark((String) valuesMap.get("remark"));
 			userOrder.setCreateTime(currentDate);
 
