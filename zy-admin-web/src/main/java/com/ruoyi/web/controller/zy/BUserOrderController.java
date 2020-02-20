@@ -242,7 +242,7 @@ public class BUserOrderController extends BaseController
     			String returnCode = "SUCCESS";
     			String returnMsg = "";
     			if("SUCCESS".equals(returnCode)) {
-    				userOrder.setOrderStatus("1");
+    				userOrder.setOrderStatus("2");
     				userOrder.setNotifyStatus("2");
     				userOrder.setNotifyNum(userOrder.getNotifyNum() + 1);
     				userOrder.setConfirmTime(new Date());

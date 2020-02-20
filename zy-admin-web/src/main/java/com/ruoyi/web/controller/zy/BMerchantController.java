@@ -92,6 +92,8 @@ public class BMerchantController extends BaseController
     @ResponseBody
     public AjaxResult addSave(BMerchant bMerchant)
     {
+    	SysUser sysUser =  ShiroUtils.getSysUser();
+    	bMerchant.setCreateUser(sysUser.getLoginName());
         return toAjax(bMerchantService.insertBMerchant(bMerchant));
     }
 

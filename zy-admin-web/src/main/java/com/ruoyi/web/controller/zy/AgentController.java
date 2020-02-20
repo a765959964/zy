@@ -143,6 +143,8 @@ public class AgentController extends BaseController
     @ResponseBody
     public AjaxResult addSave(Agent agent)
     {
+    	SysUser sysUser =  ShiroUtils.getSysUser();
+    	agent.setCreateUser(sysUser.getLoginName());
         return toAjax(agentService.insertAgent(agent));
     }
 

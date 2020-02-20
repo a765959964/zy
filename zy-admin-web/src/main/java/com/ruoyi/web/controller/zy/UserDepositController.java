@@ -162,4 +162,29 @@ public class UserDepositController extends BaseController
     {
         return toAjax(userDepositService.deleteBUserDepositByIds(ids));
     }
+    
+    /**
+     * 审核
+     */
+    @RequiresPermissions("zy:userDeposit:audit")
+    @Log(title = "审核", businessType = BusinessType.OTHER)
+    @PostMapping("/audit")
+    @ResponseBody
+    public AjaxResult audit(Long id)
+    {
+    	try {
+    		
+    		BUserDeposit userDeposit = userDepositService.selectBUserDepositById(id); 
+    		userDeposit.setReviewStatus("3");
+    		userDeposit.setFlag("Y");
+    		userDeposit.setReviewTime(new Date());
+    		userDepositService.updateBUserDeposit(userDeposit);
+			return success();
+		} catch (Exception e) {
+			logger.info("审核参数：系统异常"+e.getMessage());
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
 }
