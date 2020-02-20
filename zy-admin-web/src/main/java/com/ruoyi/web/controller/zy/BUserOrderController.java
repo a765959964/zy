@@ -1,6 +1,5 @@
 package com.ruoyi.web.controller.zy;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -18,8 +17,6 @@ import com.ruoyi.zy.domain.BUserReceipt;
 import com.ruoyi.zy.service.IBMerchantService;
 import com.ruoyi.zy.service.IBUserOrderService;
 import com.ruoyi.zy.service.IBUserReceiptService;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -37,11 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * 用户订单记录Controller
@@ -375,7 +368,7 @@ public class BUserOrderController extends BaseController
     /**
      * 测试方法
      */
-    @RequiresPermissions("zy:userorder:test")
+//    @RequiresPermissions("zy:userorder:test")
     @Log(title = "订单测试", businessType = BusinessType.OTHER)
     @PostMapping("/test")
     @ResponseBody
