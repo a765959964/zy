@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 查询用户订单金额  -->
     <select id="getOrderMoneyList" resultType="java.util.Map">
           SELECT
-            dd.dict_label dictLabel,
+            d.dict_label dictLabel,
             t.order_amount orderAmount,
             t.agent,
             ud.earnest_money earnestMoney,
@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM
             b_user_order t
         LEFT JOIN b_user_deposit ud ON t.agent = ud.agent
-        left join sys_dict_data dd on dd.dict_value = t.pay_type
+        left join sys_dict_data d on d.dict_value = t.pay_type
         <where>
             <if test="username != null  and username != ''"> and t.username = #{username}</if>
             <if test="payType != null  and payType != ''"> and t.pay_type = #{payType}</if>
